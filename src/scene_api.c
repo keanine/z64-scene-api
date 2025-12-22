@@ -13,21 +13,34 @@ u32 exitOverrideIterator = 0;
 u16 customSceneId = VANILLA_ID;
 u16 nextCustomSceneId = VANILLA_ID;
 
+RECOMP_CALLBACK("*", recomp_on_init)
+void SceneAPI_RecompInit() {
+    SceneAPI_Init();
+    SceneAPI_PostInit();
+}
+
 void SceneAPI_SetSceneAtIndex(u8 customSceneIndex, char* name, SceneCmd* header, SceneCmd* rooms[], SceneAPI_Exit exitIDs[]) {
     customScenes[customSceneIndex] = (struct SceneAPI_CustomScene){ name, header, rooms, exitIDs };
     recomp_printf("%s Initialized in Slot %x\n", name, customSceneIndex);
 }
 
-void SceneAPI_AddScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[], SceneAPI_Exit exitIDs[]) {
+u16 SceneAPI_AddScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[], SceneAPI_Exit exitIDs[]) {
+    u16 slot = customSceneIterator;
     customScenes[customSceneIterator++] = (struct SceneAPI_CustomScene){ sceneName, header, rooms, exitIDs };
-    recomp_printf("Scene %s Initialized in Slot %x\n", sceneName, customSceneIterator - 1);
-
-    // Automatically build an export for the scene id so other mods can access it.
-    // Look at EZTR for how Schmitty did it perhaps?
+    recomp_printf("Scene %s Initialized in Slot %x\n", sceneName, slot);
+    return slot;
 }
 
-void SceneAPI_AddExitOverride(SceneId originalScene, u16 originalEntranceId, u16 newCustomSceneId) {
-    exitOverrides[exitOverrideIterator++] = (SceneAPI_ExitOverride){ originalScene, originalEntranceId, newCustomSceneId };
+void SceneAPI_AddExitOverride(SceneId originalScene, u16 originalEntranceId, SceneAPI_Exit exit) {
+    exitOverrides[exitOverrideIterator++] = (SceneAPI_ExitOverride){ originalScene, originalEntranceId, exit };
+}
+
+u16 SceneAPI_GetSceneIdByName(char* name) {
+    for (u16 i = 0; i < ARRAY_COUNT(customScenes); i++) {
+        if (customScenes[i].sceneName == name) {
+            return i;
+        }
+    }
 }
 
 u8 nextEntranceModified = false;
@@ -43,7 +56,7 @@ RECOMP_HOOK("func_808354A4") void func_808354A4(PlayState* play, s32 exitIndex, 
         if (customScenes[customSceneId].exitIdList[exitIndex].exitType == EXITTYPE_MODDED) {
             recomp_printf("New Destination (Modded): %d\n", customScenes[customSceneId].exitIdList[exitIndex]);
             modifiedNextEntrance = REPLACED_SCENE_ENTR;
-            nextCustomSceneId = customScenes[customSceneId].exitIdList[exitIndex].id;
+            nextCustomSceneId = SceneAPI_GetSceneIdByName(customScenes[customSceneId].exitIdList[exitIndex].sceneName);
         } else {
             recomp_printf("New Destination (Vanilla): %d\n", customScenes[customSceneId].exitIdList[exitIndex]);
             modifiedNextEntrance = customScenes[customSceneId].exitIdList[exitIndex].id;
@@ -56,9 +69,17 @@ RECOMP_HOOK("func_808354A4") void func_808354A4(PlayState* play, s32 exitIndex, 
         for (u32 i = 0; i < ARRAY_COUNT(exitOverrides); i++) {
             if (play->sceneId == exitOverrides[i].originalScene) {
                 if (play->setupExitList[exitIndex] == exitOverrides[i].originalEntranceId) {
-                    modifiedNextEntrance = REPLACED_SCENE_ENTR;
-                    nextCustomSceneId = exitOverrides[i].newCustomSceneId;
                     nextEntranceModified = true;
+
+                    if (exitOverrides[i].newExit.exitType == EXITTYPE_MODDED) {
+                        modifiedNextEntrance = REPLACED_SCENE_ENTR;
+                        nextCustomSceneId = SceneAPI_GetSceneIdByName(exitOverrides[i].newExit.sceneName);
+                    }
+                    else {
+                        modifiedNextEntrance = exitOverrides[i].newExit.id;
+                        nextCustomSceneId = VANILLA_ID;
+                        nextEntranceModified = true;
+                    }
                     break;
                 }
             }
@@ -110,3 +131,6 @@ RECOMP_HOOK("BgCheck_GetSpecialSceneMaxObjects") void set_col_memsize(PlayState*
         }
     }
 }
+
+// Todo:
+// - Implement linked lists instead of fixed arrays for customScenes and exitOverrides

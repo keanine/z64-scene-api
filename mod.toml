@@ -37,6 +37,7 @@ minimum_recomp_version = "1.2.2"
 dependencies = [
 # Example dependency:
 #    "modname:1.0.0"
+    "z64_scene_api"
 ]
 
 # Optional dependency mods. This has the same format as `dependencies`, but the game will still start if dependencies in this
