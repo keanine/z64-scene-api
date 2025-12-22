@@ -11,3 +11,7 @@
 patches.map
 build/
 .vscode/settings.json
+vanilla_scenes/
+oot_scenes/
+BUILD.lnk
+BUILD_AND_RUN.lnk
