@@ -1,13 +1,17 @@
 #include "scene_api.h"
+#include "ProxyMM_ObjDepLoader.h"
+#include <overlays/actors/ovl_Door_Ana/z_door_ana.h>
 
 #define REPLACED_SCENE SCENE_INSIDETOWER
 #define REPLACED_SCENE_ENTR 0xC010
 
 struct SceneAPI_CustomScene customScenes[500];
 struct SceneAPI_ExitOverride exitOverrides[500];
+struct SceneAPI_Grotto grottos[500];
 
 u32 customSceneIterator = 0;
 u32 exitOverrideIterator = 0;
+u32 grottosIterator = 0;
 
 #define VANILLA_ID 65535
 u16 customSceneId = VANILLA_ID;
@@ -35,6 +39,10 @@ void SceneAPI_AddExitOverride(SceneId originalScene, u16 originalEntranceId, Sce
     exitOverrides[exitOverrideIterator++] = (SceneAPI_ExitOverride){ originalScene, originalEntranceId, exit };
 }
 
+void SceneAPI_AddGrotto(SceneId scene, SceneAPI_Exit exit, f32 x, f32 y, f32 z) {
+    grottos[grottosIterator++] = (SceneAPI_Grotto){ scene, exit, x, y, z };
+}
+
 u16 SceneAPI_GetSceneIdByName(char* name) {
     for (u16 i = 0; i < ARRAY_COUNT(customScenes); i++) {
         if (customScenes[i].sceneName == name) {
@@ -46,19 +54,22 @@ u16 SceneAPI_GetSceneIdByName(char* name) {
 u8 nextEntranceModified = false;
 u16 modifiedNextEntrance = -1;
 PlayState* sceneAPI_play;
+// void SceneAPI_Transition(PlayState* play, s32 exitIndex) {
+//     recomp_printf("customSceneId: %d\n", customSceneId);
+// }
+
 RECOMP_HOOK("func_808354A4") void func_808354A4(PlayState* play, s32 exitIndex, s32 arg2) {
     sceneAPI_play = play;
-
     if (customSceneId != VANILLA_ID) {
         nextEntranceModified = true;
         recomp_printf("Exit Index %d\n", exitIndex);
 
-        if (customScenes[customSceneId].exitIdList[exitIndex].exitType == EXITTYPE_MODDED) {
-            recomp_printf("New Destination (Modded): %d\n", customScenes[customSceneId].exitIdList[exitIndex]);
+        if (customScenes[customSceneId].exitIdList[exitIndex].exitType == SCENEAPI_EXITTYPE_MODDED) {
+            recomp_printf("New Destination (Modded): %s\n", customScenes[customSceneId].exitIdList[exitIndex].sceneName);
             modifiedNextEntrance = REPLACED_SCENE_ENTR;
             nextCustomSceneId = SceneAPI_GetSceneIdByName(customScenes[customSceneId].exitIdList[exitIndex].sceneName);
         } else {
-            recomp_printf("New Destination (Vanilla): %d\n", customScenes[customSceneId].exitIdList[exitIndex]);
+            recomp_printf("New Destination (Vanilla): %d\n", customScenes[customSceneId].exitIdList[exitIndex].id);
             modifiedNextEntrance = customScenes[customSceneId].exitIdList[exitIndex].id;
             nextCustomSceneId = VANILLA_ID;
             customSceneId = VANILLA_ID;
@@ -71,14 +82,16 @@ RECOMP_HOOK("func_808354A4") void func_808354A4(PlayState* play, s32 exitIndex, 
                 if (play->setupExitList[exitIndex] == exitOverrides[i].originalEntranceId) {
                     nextEntranceModified = true;
 
-                    if (exitOverrides[i].newExit.exitType == EXITTYPE_MODDED) {
+                    if (exitOverrides[i].newExit.exitType == SCENEAPI_EXITTYPE_MODDED) {
                         modifiedNextEntrance = REPLACED_SCENE_ENTR;
                         nextCustomSceneId = SceneAPI_GetSceneIdByName(exitOverrides[i].newExit.sceneName);
+                        recomp_printf("New Destination (Modded): %s\n", exitOverrides[i].newExit.sceneName);
                     }
                     else {
                         modifiedNextEntrance = exitOverrides[i].newExit.id;
                         nextCustomSceneId = VANILLA_ID;
                         nextEntranceModified = true;
+                        recomp_printf("New Destination (Vanilla): %d\n", exitOverrides[i].newExit.id);
                     }
                     break;
                 }
@@ -91,6 +104,46 @@ RECOMP_HOOK_RETURN("func_808354A4") void func_808354A4_Return() {
     if (nextEntranceModified) {
         sceneAPI_play->nextEntrance = modifiedNextEntrance;
         nextEntranceModified = false;
+        recomp_printf("Do Exit\n");
+    }
+}
+
+RECOMP_HOOK("Cutscene_HandleEntranceTriggers") void on_PostInit(PlayState* play) {
+    recomp_printf(" Current Scene: %d\n", play->sceneId);
+    recomp_printf(" Grotto Scene: %d\n", grottos[0].scene);
+    if (ObjDepLoader_Load(play, 0x06, GAMEPLAY_FIELD_KEEP)) {
+        for (u32 i = 0; i < grottosIterator; i++) {
+            if (play->sceneId == grottos[i].scene) {
+                recomp_printf("Spawn grotto\n");
+                Actor_Spawn(&play->actorCtx, play, ACTOR_DOOR_ANA, grottos[i].x, grottos[i].y, grottos[i].z, SPAWN_ROT_FLAGS(    0, 0x0007), SPAWN_ROT_FLAGS(0X86,0x000D),SPAWN_ROT_FLAGS(0, 0x007F), 0x0304);
+            }
+        }
+    }
+    ObjDepLoader_Unload(play, 0x06, GAMEPLAY_FIELD_KEEP);
+}
+
+u16 sceneAPI_savedEntrance = 0;
+RECOMP_HOOK("DoorAna_WaitOpen") void on_DoorAna_WaitOpen(DoorAna* this, PlayState* play) {
+    sceneAPI_play = play;
+    sceneAPI_savedEntrance = play->nextEntrance;
+}
+
+RECOMP_HOOK_RETURN("DoorAna_WaitOpen") void return_DoorAna_WaitOpen() {
+    if (sceneAPI_savedEntrance != sceneAPI_play->nextEntrance) {
+        recomp_printf("Do Transition\n");
+        sceneAPI_play->nextEntrance = REPLACED_SCENE_ENTR;
+        // SceneAPI_Transition(sceneAPI_play, 0);
+        if (grottos[0].exit.exitType == SCENEAPI_EXITTYPE_MODDED) {
+            modifiedNextEntrance = REPLACED_SCENE_ENTR;
+            nextCustomSceneId = SceneAPI_GetSceneIdByName(grottos[0].exit.sceneName);
+            recomp_printf("New Destination (Modded): %s\n", grottos[0].exit.sceneName);
+        }
+        else {
+            modifiedNextEntrance = grottos[0].exit.id;
+            nextCustomSceneId = VANILLA_ID;
+            nextEntranceModified = true;
+            recomp_printf("New Destination (Vanilla): %d\n", grottos[0].exit.id);
+        }
     }
 }
 

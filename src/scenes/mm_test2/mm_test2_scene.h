@@ -5,7 +5,6 @@
 #include "macros.h"
 #include "z64.h"
 #include "command_macros_base.h"
-#include "../../scene_api.h"
 
 extern SceneCmd mm_test2_scene_header00[];
 extern RomFile mm_test2_scene_roomList[];
@@ -72,6 +71,5 @@ extern Gfx mm_test2_room_1_dl_Exit_Cube_001_mesh_layer_Opaque[];
 extern Gfx mm_test2_room_1_dl_Plane_001_mesh_layer_Opaque[];
 extern RoomShapeNormal mm_test2_room_1_shapeHeader;
 extern RoomShapeDListsEntry mm_test2_room_1_shapeDListsEntry[1];
-extern u16 mm_test2_scene_header00_exitList[];
 
 #endif

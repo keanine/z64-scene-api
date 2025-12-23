@@ -16,7 +16,6 @@ SceneCmd mm_test2_scene_header00[] = {
     SCENE_CMD_ANIMATED_MATERIAL_LIST(mm_test2_scene_header00_AnimatedMaterial),
     SCENE_CMD_ACTOR_CUTSCENE_LIST(13, mm_test2_scene_header00_ActorCutsceneList),
     SCENE_CMD_ACTOR_CUTSCENE_CAM_LIST(2, mm_test2_scene_header00_ActorCutsceneCameraInfo),
-    SCENE_CMD_EXIT_LIST(mm_test2_scene_header00_exitList),
     SCENE_CMD_END(),
 };
 
@@ -86,16 +85,6 @@ EntranceEntry mm_test2_scene_header00_entranceList[] = {
     { 4, 0 },
     { 5, 0 },
     { 6, 0 },
-};
-
-// SceneAPI_Exit mm_test2_scene_header00_exitList[] = {
-//     { "Custom", 0xC010, 0x72 },
-//     { "Custom", 0xC010, 0x71 },
-// };
-
-u16 mm_test2_scene_header00_exitList[] = {
-    0,
-    0,
 };
 
 TransitionActorEntry mm_test2_scene_header00_transitionActors[] = {
@@ -338,11 +327,11 @@ u64 mm_test2_room_0_dl_bedrock_i8[] = {
 };
 
 Gfx mat_mm_test2_room_0_dl_bedrock_001_f3d_layerOpaque[] = {
-	gsSPLoadGeometryMode(G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | G_LIGHTING | G_ZBUFFER),
+	gsSPLoadGeometryMode(G_SHADE | G_FOG | G_CULL_BACK | G_LIGHTING | G_ZBUFFER | G_SHADING_SMOOTH),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_CK_NONE | G_AD_NOISE | G_TC_FILT | G_CD_MAGICSQ | G_PM_NPRIMITIVE | G_CYC_2CYCLE | G_TT_NONE | G_TD_CLAMP | G_TF_POINT | G_TP_PERSP | G_TL_TILE),
-	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_RM_FOG_SHADE_A | G_ZS_PIXEL | G_RM_AA_ZB_OPA_SURF2 | G_AC_NONE),
+	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_TD_CLAMP | G_TT_NONE | G_TC_FILT | G_TP_PERSP | G_TF_POINT | G_CD_MAGICSQ | G_TL_TILE | G_PM_NPRIMITIVE | G_CYC_2CYCLE | G_AD_NOISE | G_CK_NONE),
+	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
 	gsDPSetTextureImage(G_IM_FMT_I, G_IM_SIZ_8b_LOAD_BLOCK, 1, mm_test2_room_0_dl_bedrock_i8),
@@ -355,7 +344,7 @@ Gfx mat_mm_test2_room_0_dl_bedrock_001_f3d_layerOpaque[] = {
 
 Gfx mat_revert_mm_test2_room_0_dl_bedrock_001_f3d_layerOpaque[] = {
 	gsDPPipeSync(),
-	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_RM_AA_ZB_OPA_SURF2 | G_ZS_PIXEL | G_RM_AA_ZB_OPA_SURF | G_AC_NONE),
+	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_RM_AA_ZB_OPA_SURF2 | G_AC_NONE | G_ZS_PIXEL | G_RM_AA_ZB_OPA_SURF),
 	gsSPEndDisplayList(),
 };
 

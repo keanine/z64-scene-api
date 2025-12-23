@@ -13,8 +13,8 @@ const SceneCmd* MMTEST2_SCENE_ROOMS[] = {
 };
 
 const SceneAPI_Exit EXIT_IDS[] = {
-    { EXITTYPE_MODDED, 0, MMTEST2_SCENE_NAME }, // Go to the scene with custom ID 0
-    { EXITTYPE_VANILLA, 0xC010, "" } // Go to the vanilla entrance 0xC010
+    SCENEAPI_EXIT(SCENEAPI_EXITTYPE_MODDED, 0, MMTEST2_SCENE_NAME), // Go to the scene with custom ID 0
+    SCENEAPI_EXIT(SCENEAPI_EXITTYPE_VANILLA, 0xC010, "") // Go to the vanilla entrance 0xC010
 };
 
 // Dummy symbols to let the rooms compile
@@ -25,11 +25,11 @@ u8 _mm_test2_room_1SegmentRomEnd[1];
 
 RECOMP_CALLBACK("z64_scene_api", SceneAPI_Init)
 void Scene_Test2_Init() {
-    // SceneAPI_SetSceneAtIndex(0, MMTEST2_SCENE_NAME, MMTEST2_SCENE_HEADER, MMTEST2_SCENE_ROOMS, EXIT_IDS);
     MMTEST2_ID = SceneAPI_AddScene(MMTEST2_SCENE_NAME, MMTEST2_SCENE_HEADER, MMTEST2_SCENE_ROOMS, EXIT_IDS);
 }
 
 RECOMP_CALLBACK("z64_scene_api", SceneAPI_PostInit)
 void Scene_Test2_PostInit() {
-    SceneAPI_AddExitOverride(SCENE_CLOCKTOWER, 0xC010, (SceneAPI_Exit){ EXITTYPE_MODDED, 0, MMTEST2_SCENE_NAME });
+    // SceneAPI_AddExitOverride(SCENE_CLOCKTOWER, 0xC010, (SceneAPI_Exit){ EXITTYPE_MODDED, 0, "DDAN" });
+    // SceneAPI_AddExitOverride(SCENE_CLOCKTOWER, 0xC010, (SceneAPI_Exit){ EXITTYPE_VANILLA, 0x5E10, "" });
 }

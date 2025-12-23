@@ -123,11 +123,11 @@ Gfx mm_test2_room_0_dl_Plane_mesh_layer_Opaque_tri_0[] = {
 };
 
 Gfx mat_mm_test2_room_0_dl_grass_block_top_001_f3d_layerOpaque[] = {
-	gsSPLoadGeometryMode(G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | G_LIGHTING | G_ZBUFFER),
+	gsSPLoadGeometryMode(G_SHADE | G_FOG | G_CULL_BACK | G_LIGHTING | G_ZBUFFER | G_SHADING_SMOOTH),
 	gsDPPipeSync(),
 	gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED),
-	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_CK_NONE | G_AD_NOISE | G_TC_FILT | G_CD_MAGICSQ | G_TT_RGBA16 | G_CYC_2CYCLE | G_PM_NPRIMITIVE | G_TD_CLAMP | G_TF_POINT | G_TP_PERSP | G_TL_TILE),
-	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_RM_FOG_SHADE_A | G_ZS_PIXEL | G_RM_AA_ZB_OPA_SURF2 | G_AC_NONE),
+	gsSPSetOtherMode(G_SETOTHERMODE_H, 4, 20, G_TD_CLAMP | G_TC_FILT | G_TP_PERSP | G_TF_POINT | G_TT_RGBA16 | G_CD_MAGICSQ | G_TL_TILE | G_PM_NPRIMITIVE | G_CYC_2CYCLE | G_AD_NOISE | G_CK_NONE),
+	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_OPA_SURF2),
 	gsSPTexture(65535, 65535, 0, 0, 1),
 	gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
 	gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, mm_test2_room_0_dl_grass_block_top_y_pal_rgba16),
@@ -143,7 +143,7 @@ Gfx mat_mm_test2_room_0_dl_grass_block_top_001_f3d_layerOpaque[] = {
 
 Gfx mat_revert_mm_test2_room_0_dl_grass_block_top_001_f3d_layerOpaque[] = {
 	gsDPPipeSync(),
-	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_RM_AA_ZB_OPA_SURF2 | G_ZS_PIXEL | G_RM_AA_ZB_OPA_SURF | G_AC_NONE),
+	gsSPSetOtherMode(G_SETOTHERMODE_L, 0, 32, G_RM_AA_ZB_OPA_SURF2 | G_AC_NONE | G_ZS_PIXEL | G_RM_AA_ZB_OPA_SURF),
 	gsSPEndDisplayList(),
 };
 
