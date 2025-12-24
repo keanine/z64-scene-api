@@ -37,8 +37,7 @@ minimum_recomp_version = "1.2.2"
 dependencies = [
 # Example dependency:
 #    "modname:1.0.0"
-    "z64_scene_api",
-    "ProxyMM_ObjDepLoader"
+#    "zelda_recomp_auto_object_slots"
 ]
 
 # Optional dependency mods. This has the same format as `dependencies`, but the game will still start if dependencies in this
@@ -61,7 +60,7 @@ native_libraries = [
 elf_path = "build/mod.elf"
 
 # Output mod filename.
-mod_filename = "mm_recomp_mod_template"
+mod_filename = "z64_scene_api"
 
 # Reference symbol files.
 func_reference_syms_file = "Zelda64RecompSyms/mm.us.rev1.syms.toml"
