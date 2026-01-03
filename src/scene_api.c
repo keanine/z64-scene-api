@@ -33,9 +33,9 @@ void SceneAPI_RecompInit() {
     SceneAPI_PostInit();
     
     recomp_printf("== Scene API Initialized ==\n\n");
-    recomp_printf("Scene: %x\n", SCENE_INSIDETOWER);
-    recomp_printf("Entr: %x\n", ENTR_SCENE_CLOCK_TOWER_INTERIOR);
-    recomp_printf("Entr w/ exit: %x\n", ENTRANCE(CLOCK_TOWER_INTERIOR, 1));
+    // recomp_printf("Scene: %x\n", SCENE_INSIDETOWER);
+    // recomp_printf("Entr: %x\n", ENTR_SCENE_CLOCK_TOWER_INTERIOR);
+    // recomp_printf("Entr w/ exit: %x\n", ENTRANCE(CLOCK_TOWER_INTERIOR, 1));
 }
 
 // Override the sceneSegment as well as setting the customSceneId
