@@ -16,9 +16,9 @@ typedef struct SceneAPI_Exit {
 
 #define SCENEAPI_EXIT(exitType, id, sceneName) (SceneAPI_Exit){ exitType, id, sceneName }
 
-RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_AddScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[], SceneAPI_Exit exitIDs[]));
-RECOMP_IMPORT("z64_scene_api", void SceneAPI_AddExitOverride(SceneId originalScene, u16 originalEntranceId, SceneAPI_Exit exit));
-RECOMP_IMPORT("z64_scene_api", void SceneAPI_AddGrotto(SceneId scene, SceneAPI_Exit exit, f32 x, f32 y, f32 z));
-RECOMP_IMPORT("z64_scene_api",  void SceneAPI_AddGrottoToCustomScene(char* sceneName, SceneAPI_Exit exit, f32 x, f32 y, f32 z));
+RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[]));
+RECOMP_IMPORT("z64_scene_api", void SceneAPI_RegisterExitOverride(SceneId originalScene, u16 originalEntranceId, SceneAPI_Exit exit));
+RECOMP_IMPORT("z64_scene_api", void SceneAPI_RegisterGrotto(SceneId scene, SceneAPI_Exit exit, f32 x, f32 y, f32 z));
+RECOMP_IMPORT("z64_scene_api",  void SceneAPI_RegisterGrottoToCustomScene(char* sceneName, SceneAPI_Exit exit, f32 x, f32 y, f32 z));
 
 #endif /* SCENE_API_HEADER_H */
