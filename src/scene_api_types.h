@@ -9,7 +9,7 @@
 enum SceneAPI_ExitType { SCENEAPI_EXITTYPE_VANILLA, SCENEAPI_EXITTYPE_MODDED };
 
 typedef struct SceneAPI_Exit {
-    enum SceneAPI_ExitType exitType;
+    u8 exitType;
     u16 id;
     char* sceneName;
 } SceneAPI_Exit;

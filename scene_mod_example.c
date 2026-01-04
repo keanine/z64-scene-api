@@ -28,5 +28,6 @@ void Scene_DDAN_Init() {
 // Registers a grotto in North Clock Town
 RECOMP_CALLBACK("z64_scene_api", SceneAPI_PostInit)
 void Scene_DDAN_PostInit() {
-    SceneAPI_RegisterGrotto(SCENE_BACKTOWN, SCENEAPI_EXIT(SCENEAPI_EXITTYPE_MODDED, 0, DDAN_SCENE_NAME), -584,    200,  -1780);
+    SceneAPI_RegisterGrotto(SCENE_BACKTOWN, SCENEAPI_MODDED_EXIT(DDAN_SCENE_NAME), -584,    200,  -1780);
+    // SceneAPI_RegisterGrotto(SCENE_BACKTOWN, SCENEAPI_VANILLA_EXIT(0xC010), -584,    200,  -2180);
 }

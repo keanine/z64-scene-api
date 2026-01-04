@@ -6,15 +6,14 @@
 #include "recomputils.h"
 #include "PR/gbi.h"
 
-enum SceneAPI_ExitType { SCENEAPI_EXITTYPE_VANILLA, SCENEAPI_EXITTYPE_MODDED };
-
 typedef struct SceneAPI_Exit {
-    enum SceneAPI_ExitType exitType;
+    u8 exitType;
     u16 id;
     char* sceneName;
 } SceneAPI_Exit;
 
-#define SCENEAPI_EXIT(exitType, id, sceneName) (SceneAPI_Exit){ exitType, id, sceneName }
+#define SCENEAPI_MODDED_EXIT(sceneName) (SceneAPI_Exit){ 1, 0, sceneName }
+#define SCENEAPI_VANILLA_EXIT(entranceId) (SceneAPI_Exit){ 0, entranceId, "" }
 
 RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[]));
 RECOMP_IMPORT("z64_scene_api", void SceneAPI_RegisterExitOverride(SceneId originalScene, u16 originalEntranceId, SceneAPI_Exit exit));
