@@ -95,8 +95,6 @@ RECOMP_HOOK("Message_DrawMain") void on_Message_DrawMain(PlayState* play, Gfx** 
     if (sceneAPI_customSceneId != 65535 && play->sceneId == SCENEAPI_SCENE) {
         if (msgCtx->msgLength != 0) {
             if (msgCtx->msgMode == MSGMODE_18) {
-                recomp_printf("%d\n", sceneAPI_customScenes[sceneAPI_customSceneId].properties.enableElegyOfEmptiness);
-                recomp_printf("%d\n", sceneAPI_customScenes[sceneAPI_customSceneId].properties.enableSongOfSoaring);
                 if (sceneAPI_customScenes[sceneAPI_customSceneId].properties.enableElegyOfEmptiness) {
                     sceneAPI_modifiedElegyScene = true;
                     play->sceneId = SCENE_F40;
