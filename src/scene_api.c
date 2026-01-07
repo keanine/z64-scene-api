@@ -41,7 +41,7 @@ void SceneAPI_RecompInit() {
 RECOMP_HOOK("Play_InitScene") void on_init_scene(PlayState* play, s32 spawn) {
     recomp_printf("Spawning into scene %d (spawn %d)\n", play->sceneId, spawn);
     
-    if (sceneAPI_nextCustomSceneId != 65535) {
+    if (sceneAPI_nextCustomSceneId != SCENEAPI_VANILLA_ID) {
         if (play->sceneId == SCENEAPI_SCENE) {
             sceneAPI_customSceneId = sceneAPI_nextCustomSceneId;
             sceneAPI_nextCustomSceneId = SCENEAPI_VANILLA_ID;
@@ -53,7 +53,7 @@ RECOMP_HOOK("Play_InitScene") void on_init_scene(PlayState* play, s32 spawn) {
 
 // Overrides the room list
 RECOMP_HOOK("Room_RequestNewRoom") void on_room_request(PlayState* play, RoomContext* roomCtx, s32 index) {
-    if (sceneAPI_customSceneId != 65535) {
+    if (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID) {
         if (play->sceneId == SCENEAPI_SCENE && roomCtx->status == 0) {
             roomCtx->prevRoom = roomCtx->curRoom;
             roomCtx->curRoom.num = index;
@@ -71,20 +71,11 @@ RECOMP_HOOK("Room_RequestNewRoom") void on_room_request(PlayState* play, RoomCon
 
 // Increases the number of surface nodes
 RECOMP_HOOK("BgCheck_GetSpecialSceneMaxObjects") void set_col_memsize(PlayState* play, s32* maxNodes, s32* maxPolygons, s32* maxVertices) {
-    if (sceneAPI_customSceneId != 65535) {
+    if (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID) {
         if (play->sceneId == SCENEAPI_SCENE) {
             play->colCtx.memSize = 0x23000 * 2; // increase this if you need more surface nodes
         }
     }
-}
-
-u16 SceneAPI_GetSceneIdByName(char* name) {
-    for (u16 i = 0; i < ARRAY_COUNT(sceneAPI_customScenes); i++) {
-        if (sceneAPI_customScenes[i].sceneName == name) {
-            return i;
-        }
-    }
-    return -1;
 }
 
 // If the elegy of emptiness is played, check if the custom scene allows it
@@ -92,7 +83,7 @@ RECOMP_HOOK("Message_DrawMain") void on_Message_DrawMain(PlayState* play, Gfx** 
     MessageContext* msgCtx = &play->msgCtx;
     sceneAPI_play = play;
 
-    if (sceneAPI_customSceneId != 65535 && play->sceneId == SCENEAPI_SCENE) {
+    if (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID && play->sceneId == SCENEAPI_SCENE) {
         if (msgCtx->msgLength != 0) {
             if (msgCtx->msgMode == MSGMODE_18) {
                 if (sceneAPI_customScenes[sceneAPI_customSceneId].properties.enableElegyOfEmptiness) {
@@ -104,6 +95,7 @@ RECOMP_HOOK("Message_DrawMain") void on_Message_DrawMain(PlayState* play, Gfx** 
     }
 }
 
+// Reset elegy variables if they were changed
 RECOMP_HOOK_RETURN("Message_DrawMain") void return_Message_DrawMain() {
     MessageContext* msgCtx = &sceneAPI_play->msgCtx;
 
@@ -111,4 +103,13 @@ RECOMP_HOOK_RETURN("Message_DrawMain") void return_Message_DrawMain() {
         sceneAPI_play->sceneId = SCENEAPI_SCENE;
         sceneAPI_modifiedElegyScene = false;
     }
+}
+
+u16 SceneAPI_GetSceneIdByName(char* name) {
+    for (u16 i = 0; i < ARRAY_COUNT(sceneAPI_customScenes); i++) {
+        if (sceneAPI_customScenes[i].sceneName == name) {
+            return i;
+        }
+    }
+    return -1;
 }
