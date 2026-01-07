@@ -5,29 +5,24 @@
 
 #include "scene_api_header.h"
 
-u16 DDAN_ID;
-#define DDAN_SCENE_NAME "DDAN"
-const SceneCmd* DDAN_SCENE_HEADER = ddan_scene_header00;
-const SceneCmd* DDAN_SCENE_ROOMS[] = {
-    ddan_room_0_header00,
-    ddan_room_1_header00
+static char* sceneName = "Dodongo's Cavern";
+static const SceneCmd* sceneHeader = SCENE_HEADER(ddan);
+static const SceneCmd* sceneRooms[] = {
+    ROOM_HEADER(ddan, 0),
+    ROOM_HEADER(ddan, 1),
 };
 
-// Dummy symbols to let the rooms compile
-u8 _ddan_room_0SegmentRomStart[1];
-u8 _ddan_room_0SegmentRomEnd[1];
-u8 _ddan_room_1SegmentRomStart[1];
-u8 _ddan_room_1SegmentRomEnd[1];
+THIRTY_DUMMY_SEGMENTS(ddan)
 
-// Registers a custom scene, ddan_scene
 RECOMP_CALLBACK("z64_scene_api", SceneAPI_Init)
 void Scene_DDAN_Init() {
-    DDAN_ID = SceneAPI_RegisterScene(DDAN_SCENE_NAME, DDAN_SCENE_HEADER, DDAN_SCENE_ROOMS);
+    SceneAPI_RegisterScene(sceneName, sceneHeader, sceneRooms, SCENEAPI_DEFAULT_PROPERTIES);
 }
 
-// Registers a grotto in North Clock Town
 RECOMP_CALLBACK("z64_scene_api", SceneAPI_PostInit)
 void Scene_DDAN_PostInit() {
-    SceneAPI_RegisterGrotto(SCENE_BACKTOWN, SCENEAPI_MODDED_EXIT(DDAN_SCENE_NAME), -584,    200,  -1780);
-    // SceneAPI_RegisterGrotto(SCENE_BACKTOWN, SCENEAPI_VANILLA_EXIT(0xC010), -584,    200,  -2180);
+    SceneAPI_RegisterWarpGrotto(SCENE_BACKTOWN, SCENEAPI_MODDED_EXIT(sceneName), -584,    200,  -1780);
+    SceneAPI_RegisterWarpGrotto(SCENE_BACKTOWN, SCENEAPI_VANILLA_EXIT(ENTRANCE(CLOCK_TOWER_INTERIOR, 1)), -524,    200,  -1780);
+
+    SceneAPI_RegisterExitOverride(SCENE_CLOCKTOWER, 0xC010, SCENEAPI_MODDED_EXIT(sceneName));
 }

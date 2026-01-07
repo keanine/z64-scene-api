@@ -28,4 +28,42 @@ RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterExitOverride(SceneId origina
 RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterWarpGrotto(SceneId scene, SceneAPI_Exit exit, f32 x, f32 y, f32 z));
 RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterWarpGrottoToCustomScene(char* sceneName, SceneAPI_Exit exit, f32 x, f32 y, f32 z));
 
+#define SCENE_HEADER(scenePrefix) scenePrefix##_scene_header00
+#define ROOM_HEADER(scenePrefix, roomNumber) scenePrefix##_room_##roomNumber##_header00
+
+
+#define DUMMY_SEGMENT(scene, roomNumber) u8 _##scene##_room_##roomNumber##SegmentRomStart[1]; u8 _##scene##_room_##roomNumber##SegmentRomEnd[1];
+#define THIRTY_DUMMY_SEGMENTS(scene) \
+DUMMY_SEGMENT(scene, 0) \
+DUMMY_SEGMENT(scene, 1) \
+DUMMY_SEGMENT(scene, 2) \
+DUMMY_SEGMENT(scene, 3) \
+DUMMY_SEGMENT(scene, 4) \
+DUMMY_SEGMENT(scene, 5) \
+DUMMY_SEGMENT(scene, 6) \
+DUMMY_SEGMENT(scene, 7) \
+DUMMY_SEGMENT(scene, 8) \
+DUMMY_SEGMENT(scene, 9) \
+DUMMY_SEGMENT(scene, 10) \
+DUMMY_SEGMENT(scene, 11) \
+DUMMY_SEGMENT(scene, 12) \
+DUMMY_SEGMENT(scene, 13) \
+DUMMY_SEGMENT(scene, 14) \
+DUMMY_SEGMENT(scene, 15) \
+DUMMY_SEGMENT(scene, 16) \
+DUMMY_SEGMENT(scene, 17) \
+DUMMY_SEGMENT(scene, 18) \
+DUMMY_SEGMENT(scene, 19) \
+DUMMY_SEGMENT(scene, 20) \
+DUMMY_SEGMENT(scene, 21) \
+DUMMY_SEGMENT(scene, 22) \
+DUMMY_SEGMENT(scene, 23) \
+DUMMY_SEGMENT(scene, 24) \
+DUMMY_SEGMENT(scene, 25) \
+DUMMY_SEGMENT(scene, 26) \
+DUMMY_SEGMENT(scene, 27) \
+DUMMY_SEGMENT(scene, 28) \
+DUMMY_SEGMENT(scene, 29) \
+DUMMY_SEGMENT(scene, 30)
+
 #endif /* SCENE_API_HEADER_H */
