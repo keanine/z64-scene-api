@@ -17,13 +17,19 @@ u16 SceneAPI_GetSceneIdByName(char* name);
 // char* sceneName;
 #define SCENEAPI_EXIT(exitType, id, sceneName) (SceneAPI_Exit){ exitType, id, sceneName }
 
+// Woodfall seems to crash?
+// #define SCENEAPI_SCENE SCENE_MITURIN
+// #define SCENEAPI_SCENE_ENTR 0x3000
 #define SCENEAPI_SCENE SCENE_INSIDETOWER
 #define SCENEAPI_SCENE_ENTR 0xC010
+
 #define SCENEAPI_VANILLA_ID 65535
+
+#define SCENEAPI_ENTRANCE(scene, spawn) ((((scene) & 0x7F) << 9) | (((spawn) & 0x1F) << 4))
 
 extern struct SceneAPI_CustomScene sceneAPI_customScenes[500];
 extern struct SceneAPI_ExitOverride sceneAPI_exitOverrides[500];
-extern struct SceneAPI_Grotto sceneAPI_grottos[500];
+extern struct SceneAPI_Grotto sceneAPI_warpGrottos[500];
 
 extern u8 sceneAPI_isNextEntranceModified;
 extern u16 sceneAPI_modifiedNextEntrance;

@@ -5,7 +5,7 @@
 
 struct SceneAPI_CustomScene sceneAPI_customScenes[500];
 struct SceneAPI_ExitOverride sceneAPI_exitOverrides[500];
-struct SceneAPI_Grotto sceneAPI_grottos[500];
+struct SceneAPI_Grotto sceneAPI_warpGrottos[500];
 
 u32 sceneAPI_customSceneIterator = 0;
 u32 sceneAPI_exitOverrideIterator = 0;
@@ -21,6 +21,8 @@ SceneAPI_Grotto* sceneAPI_currentGrotto = NULL;
 u16 sceneAPI_customSceneId = SCENEAPI_VANILLA_ID;
 u16 sceneAPI_nextCustomSceneId = SCENEAPI_VANILLA_ID;
 
+u8 sceneAPI_modifiedElegyScene = false;
+
 // Used to register custom scenes from external scene mods
 RECOMP_CALLBACK("*", recomp_on_init)
 void SceneAPI_RecompInit() {
@@ -29,13 +31,10 @@ void SceneAPI_RecompInit() {
     // Register custom scenes
     SceneAPI_Init();
     
-    // Register grottos and exit overrides
+    // Register warp grottos and exit overrides
     SceneAPI_PostInit();
     
     recomp_printf("== Scene API Initialized ==\n\n");
-    // recomp_printf("Scene: %x\n", SCENE_INSIDETOWER);
-    // recomp_printf("Entr: %x\n", ENTR_SCENE_CLOCK_TOWER_INTERIOR);
-    // recomp_printf("Entr w/ exit: %x\n", ENTRANCE(CLOCK_TOWER_INTERIOR, 1));
 }
 
 // Override the sceneSegment as well as setting the customSceneId
@@ -86,4 +85,32 @@ u16 SceneAPI_GetSceneIdByName(char* name) {
         }
     }
     return -1;
+}
+
+// If the elegy of emptiness is played, check if the custom scene allows it
+RECOMP_HOOK("Message_DrawMain") void on_Message_DrawMain(PlayState* play, Gfx** gfxP) {
+    MessageContext* msgCtx = &play->msgCtx;
+    sceneAPI_play = play;
+
+    if (sceneAPI_customSceneId != 65535 && play->sceneId == SCENEAPI_SCENE) {
+        if (msgCtx->msgLength != 0) {
+            if (msgCtx->msgMode == MSGMODE_18) {
+                recomp_printf("%d\n", sceneAPI_customScenes[sceneAPI_customSceneId].properties.enableElegyOfEmptiness);
+                recomp_printf("%d\n", sceneAPI_customScenes[sceneAPI_customSceneId].properties.enableSongOfSoaring);
+                if (sceneAPI_customScenes[sceneAPI_customSceneId].properties.enableElegyOfEmptiness) {
+                    sceneAPI_modifiedElegyScene = true;
+                    play->sceneId = SCENE_F40;
+                }
+            }
+        }
+    }
+}
+
+RECOMP_HOOK_RETURN("Message_DrawMain") void return_Message_DrawMain() {
+    MessageContext* msgCtx = &sceneAPI_play->msgCtx;
+
+    if (sceneAPI_modifiedElegyScene) {
+        sceneAPI_play->sceneId = SCENEAPI_SCENE;
+        sceneAPI_modifiedElegyScene = false;
+    }
 }

@@ -14,11 +14,16 @@ typedef struct SceneAPI_Exit {
     char* sceneName;
 } SceneAPI_Exit;
 
+typedef struct SceneAPI_SceneProperties {
+    u8 enableElegyOfEmptiness;
+    u8 enableSongOfSoaring;
+} SceneAPI_SceneProperties;
+
 typedef struct SceneAPI_CustomScene {
     char* sceneName;
     SceneCmd* sceneSegment;
     SceneCmd** roomList;
-    // SceneAPI_Exit* exitIdList;
+    SceneAPI_SceneProperties properties;
 } SceneAPI_CustomScene;
 
 typedef struct SceneAPI_Grotto {

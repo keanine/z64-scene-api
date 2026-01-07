@@ -6,10 +6,10 @@
 // Spawn registered grottos
 RECOMP_HOOK("Cutscene_HandleEntranceTriggers") void on_PostInit(PlayState* play) {
     for (u32 i = 0; i < sceneAPI_grottosIterator; i++) {
-        if (play->sceneId == sceneAPI_grottos[i].scene && (sceneAPI_customSceneId == SCENEAPI_VANILLA_ID || (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID && sceneAPI_customSceneId == sceneAPI_grottos[i].customSceneIndex))) {
+        if (play->sceneId == sceneAPI_warpGrottos[i].scene && (sceneAPI_customSceneId == SCENEAPI_VANILLA_ID || (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID && sceneAPI_customSceneId == sceneAPI_warpGrottos[i].customSceneIndex))) {
             if (sceneAPI_customSceneId == SCENEAPI_VANILLA_ID || 
-                (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID && sceneAPI_grottos[i].customSceneIndex == sceneAPI_customSceneId)) {
-                sceneAPI_grottos[i].actor = Actor_Spawn(&play->actorCtx, play, ACTOR_DOOR_ANA, sceneAPI_grottos[i].x, sceneAPI_grottos[i].y, sceneAPI_grottos[i].z, SPAWN_ROT_FLAGS(    0, 0x0007), SPAWN_ROT_FLAGS(0X86,0x000D),SPAWN_ROT_FLAGS(0, 0x007F), 0x0304);
+                (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID && sceneAPI_warpGrottos[i].customSceneIndex == sceneAPI_customSceneId)) {
+                sceneAPI_warpGrottos[i].actor = Actor_Spawn(&play->actorCtx, play, ACTOR_DOOR_ANA, sceneAPI_warpGrottos[i].x, sceneAPI_warpGrottos[i].y, sceneAPI_warpGrottos[i].z, SPAWN_ROT_FLAGS(0, 0x0007), SPAWN_ROT_FLAGS(0X86,0x000D), SPAWN_ROT_FLAGS(0, 0x007F), 0x0304);
             }
         }
     }
@@ -20,8 +20,8 @@ RECOMP_HOOK("DoorAna_WaitOpen") void on_DoorAna_WaitOpen(DoorAna* this, PlayStat
     sceneAPI_play = play;
 
     for (u32 i = 0; i < sceneAPI_grottosIterator; i++) {
-        if (sceneAPI_grottos[i].actor == this) {
-            sceneAPI_currentGrotto = &sceneAPI_grottos[i];
+        if (sceneAPI_warpGrottos[i].actor == this) {
+            sceneAPI_currentGrotto = &sceneAPI_warpGrottos[i];
             sceneAPI_savedGrottoEntrance = play->nextEntrance;
             return;
         }
