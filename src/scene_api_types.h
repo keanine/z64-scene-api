@@ -6,13 +6,13 @@
 #include "recomputils.h"
 #include "PR/gbi.h"
 
-enum SceneAPI_ExitType { SCENEAPI_EXITTYPE_VANILLA, SCENEAPI_EXITTYPE_MODDED };
+enum SceneAPI_SceneType { SCENEAPI_SCENETYPE_VANILLA, SCENEAPI_SCENETYPE_MODDED };
 
-typedef struct SceneAPI_Exit {
-    u8 exitType;
-    u16 id;
+typedef struct SceneAPI_SceneId {
+    u8 sceneType;
+    u16 sceneId;
     char* sceneName;
-} SceneAPI_Exit;
+} SceneAPI_SceneId;
 
 typedef struct SceneAPI_SceneProperties {
     u8 enableElegyOfEmptiness;
@@ -27,9 +27,12 @@ typedef struct SceneAPI_CustomScene {
 } SceneAPI_CustomScene;
 
 typedef struct SceneAPI_Grotto {
-    SceneId scene;
-    u16 customSceneIndex;
-    SceneAPI_Exit exit;
+    // SceneId scene;
+    // u16 customSceneIndex;
+    // SceneAPI_SceneId exit;
+    SceneAPI_SceneId fromScene;
+    SceneAPI_SceneId toScene;
+    u16 spawnIndex;
     f32 x;
     f32 y;
     f32 z;
@@ -39,7 +42,7 @@ typedef struct SceneAPI_Grotto {
 typedef struct SceneAPI_ExitOverride {
     SceneId originalScene;
     u16 originalEntranceId;
-    SceneAPI_Exit newExit;
+    SceneAPI_SceneId newExit;
 } SceneAPI_ExitOverride;
 
 extern EntranceSceneId sceneAPI_entrances[];

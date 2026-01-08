@@ -11,6 +11,7 @@
 #include <z64scene.h>
 
 u16 SceneAPI_GetSceneIdByName(char* name);
+extern u8 IsCurrentScene(PlayState* play, SceneAPI_SceneId scene);
 
 // enum SceneAPI_ExitType exitType;
 // u16 id;
@@ -21,7 +22,7 @@ u16 SceneAPI_GetSceneIdByName(char* name);
 // #define SCENEAPI_SCENE SCENE_MITURIN
 // #define SCENEAPI_SCENE_ENTR 0x3000
 #define SCENEAPI_SCENE SCENE_INSIDETOWER
-#define SCENEAPI_SCENE_ENTR 0xC010
+#define SCENEAPI_SCENE_ENTR ENTR_SCENE_CLOCK_TOWER_INTERIOR
 
 #define SCENEAPI_VANILLA_ID 65535
 
