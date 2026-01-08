@@ -8,9 +8,9 @@ u16 SceneAPI_RegisterScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[],
     return slot;
 }
 
-u16 SceneAPI_RegisterExitOverride(SceneId originalScene, u16 originalEntranceId, SceneAPI_SceneId exit) {
+u16 SceneAPI_RegisterExitOverride(SceneAPI_SceneId fromScene, u16 exitIndex, SceneAPI_SceneId toScene, u16 entranceIndex) {
     u16 slot = sceneAPI_exitOverrideIterator;
-    sceneAPI_exitOverrides[sceneAPI_exitOverrideIterator++] = (SceneAPI_ExitOverride){ originalScene, originalEntranceId, exit };
+    sceneAPI_exitOverrides[sceneAPI_exitOverrideIterator++] = (SceneAPI_ExitOverride){ fromScene, exitIndex, toScene, entranceIndex };
     return slot;
 }
 

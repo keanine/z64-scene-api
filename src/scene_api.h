@@ -38,6 +38,7 @@ extern u16 sceneAPI_savedGrottoEntrance;
 
 extern PlayState* sceneAPI_play;
 extern SceneAPI_Grotto* sceneAPI_currentGrotto;
+extern SceneAPI_ExitOverride* sceneAPI_currentExitOverride;
 
 extern u32 sceneAPI_customSceneIterator;
 extern u32 sceneAPI_exitOverrideIterator;

@@ -14,23 +14,23 @@ typedef struct SceneAPI_SceneProperties {
 #define SCENEAPI_DEFAULT_PROPERTIES (SceneAPI_SceneProperties){ false, false }
 #define SCENEAPI_PROPERTIES(elegy, soaring) (SceneAPI_SceneProperties){ elegy, soaring }
 
-typedef struct SceneAPI_Exit {
-    u8 exitType;
-    u16 id;
+typedef struct SceneAPI_SceneId {
+    u8 sceneType;
+    u16 sceneId;
     char* sceneName;
-} SceneAPI_Exit;
+} SceneAPI_SceneId;
 
-#define SCENEAPI_MODDED_EXIT(sceneName) (SceneAPI_Exit){ 1, 0, sceneName }
-#define SCENEAPI_VANILLA_EXIT(entranceId) (SceneAPI_Exit){ 0, entranceId, "" }
+#define SCENEAPI_MSCENE_ID(customSceneName) (SceneAPI_SceneId){ 1, 0, customSceneName }
+#define SCENEAPI_VSCENE_ID(scene) (SceneAPI_SceneId){ 0, scene, "" }
 
 RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[], SceneAPI_SceneProperties properties));
-RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterExitOverride(SceneId originalScene, u16 originalEntranceId, SceneAPI_Exit exit));
-RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterWarpGrotto(SceneId scene, SceneAPI_Exit exit, f32 x, f32 y, f32 z));
-RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterWarpGrottoToCustomScene(char* sceneName, SceneAPI_Exit exit, f32 x, f32 y, f32 z));
+RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterExitOverride(SceneAPI_SceneId fromScene, u16 exitIndex, SceneAPI_SceneId toScene, u16 entranceIndex));
+RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterWarpGrotto(SceneAPI_SceneId fromScene, SceneAPI_SceneId toScene, u16 spawnIndex, f32 x, f32 y, f32 z));
+
+
 
 #define SCENE_HEADER(scenePrefix) scenePrefix##_scene_header00
 #define ROOM_HEADER(scenePrefix, roomNumber) scenePrefix##_room_##roomNumber##_header00
-
 
 #define DUMMY_SEGMENT(scene, roomNumber) u8 _##scene##_room_##roomNumber##SegmentRomStart[1]; u8 _##scene##_room_##roomNumber##SegmentRomEnd[1];
 #define THIRTY_DUMMY_SEGMENTS(scene) \

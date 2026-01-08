@@ -40,9 +40,10 @@ typedef struct SceneAPI_Grotto {
 } SceneAPI_Grotto;
 
 typedef struct SceneAPI_ExitOverride {
-    SceneId originalScene;
-    u16 originalEntranceId;
-    SceneAPI_SceneId newExit;
+    SceneAPI_SceneId fromScene;
+    u16 exitIndex;
+    SceneAPI_SceneId toScene;
+    u16 entranceIndex;
 } SceneAPI_ExitOverride;
 
 extern EntranceSceneId sceneAPI_entrances[];

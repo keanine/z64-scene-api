@@ -17,6 +17,7 @@ u16 sceneAPI_savedGrottoEntrance = 0;
 
 PlayState* sceneAPI_play = NULL;
 SceneAPI_Grotto* sceneAPI_currentGrotto = NULL;
+SceneAPI_ExitOverride* sceneAPI_currentExitOverride = NULL;
 
 u16 sceneAPI_customSceneId = SCENEAPI_VANILLA_ID;
 u16 sceneAPI_nextCustomSceneId = SCENEAPI_VANILLA_ID;
@@ -121,4 +122,5 @@ u8 IsCurrentScene(PlayState* play, SceneAPI_SceneId scene) {
         case SCENEAPI_SCENETYPE_MODDED:
             return (play->sceneId == SCENEAPI_SCENE && sceneAPI_customSceneId == SceneAPI_GetSceneIdByName(scene.sceneName));
     }
+    return false;
 }
