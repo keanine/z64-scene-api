@@ -20,9 +20,9 @@ void Scene_DDAN_Init() {
 }
 
 RECOMP_CALLBACK("z64_scene_api", SceneAPI_PostInit)
-void Scene_DDAN_PostInit() {
-    SceneAPI_RegisterWarpGrotto(SCENE_BACKTOWN, SCENEAPI_MODDED_EXIT(sceneName), -584,    200,  -1780);
-    SceneAPI_RegisterWarpGrotto(SCENE_BACKTOWN, SCENEAPI_VANILLA_EXIT(ENTRANCE(CLOCK_TOWER_INTERIOR, 1)), -524,    200,  -1780);
+void Scene_DDAN_PostInit() {    
+    SceneAPI_RegisterWarpGrotto(SCENEAPI_VSCENE_ID(ENTR_SCENE_NORTH_CLOCK_TOWN), SCENEAPI_MSCENE_ID(sceneName), 1, -584,    200,  -1780);
+    SceneAPI_RegisterWarpGrotto(SCENEAPI_MSCENE_ID(sceneName), SCENEAPI_VSCENE_ID(ENTR_SCENE_NORTH_CLOCK_TOWN), 0, 0, 0, 0);
 
-    SceneAPI_RegisterExitOverride(SCENE_CLOCKTOWER, 0xC010, SCENEAPI_MODDED_EXIT(sceneName));
+    SceneAPI_RegisterExitOverride(SCENEAPI_VSCENE_ID(ENTR_SCENE_SOUTH_CLOCK_TOWN), 0, SCENEAPI_VSCENE_ID(ENTR_SCENE_BOMB_SHOP), 0);
 }
