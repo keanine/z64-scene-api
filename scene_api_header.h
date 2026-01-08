@@ -16,7 +16,7 @@ typedef struct SceneAPI_SceneProperties {
 
 typedef struct SceneAPI_SceneId {
     u8 sceneType;
-    u16 sceneId;
+    u16 entrId;
     char* sceneName;
 } SceneAPI_SceneId;
 

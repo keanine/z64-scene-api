@@ -10,13 +10,27 @@ u16 SceneAPI_RegisterScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[],
 
 u16 SceneAPI_RegisterExitOverride(SceneAPI_SceneId fromScene, u16 exitIndex, SceneAPI_SceneId toScene, u16 entranceIndex) {
     u16 slot = sceneAPI_exitOverrideIterator;
-    sceneAPI_exitOverrides[sceneAPI_exitOverrideIterator++] = (SceneAPI_ExitOverride){ fromScene, exitIndex, toScene, entranceIndex };
+
+    SceneId fromId = SCENEAPI_SCENE;
+    SceneId toId = SCENEAPI_SCENE;
+
+    if (fromScene.sceneType == SCENEAPI_SCENETYPE_VANILLA) fromId = sceneAPI_entranceId_to_sceneId[fromScene.entrId];
+    if (toScene.sceneType == SCENEAPI_SCENETYPE_VANILLA) toId = sceneAPI_entranceId_to_sceneId[toScene.entrId];
+
+    sceneAPI_exitOverrides[sceneAPI_exitOverrideIterator++] = (SceneAPI_ExitOverride){ fromScene, toScene, fromId, toId, exitIndex, entranceIndex };
     return slot;
 }
 
 u16 SceneAPI_RegisterWarpGrotto(SceneAPI_SceneId fromScene, SceneAPI_SceneId toScene, u16 spawnIndex, f32 x, f32 y, f32 z) {
     u16 slot = sceneAPI_grottosIterator;
-    sceneAPI_warpGrottos[sceneAPI_grottosIterator++] = (SceneAPI_Grotto){ fromScene, toScene, spawnIndex, x, y, z, NULL };
+    
+    SceneId fromId = SCENEAPI_SCENE;
+    SceneId toId = SCENEAPI_SCENE;
+
+    if (fromScene.sceneType == SCENEAPI_SCENETYPE_VANILLA) fromId = sceneAPI_entranceId_to_sceneId[fromScene.entrId];
+    if (toScene.sceneType == SCENEAPI_SCENETYPE_VANILLA) toId = sceneAPI_entranceId_to_sceneId[toScene.entrId];
+
+    sceneAPI_warpGrottos[sceneAPI_grottosIterator++] = (SceneAPI_Grotto){ fromScene, toScene, fromId, toId, spawnIndex, x, y, z, NULL };
     return slot;
 }
 

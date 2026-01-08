@@ -10,7 +10,7 @@ enum SceneAPI_SceneType { SCENEAPI_SCENETYPE_VANILLA, SCENEAPI_SCENETYPE_MODDED 
 
 typedef struct SceneAPI_SceneId {
     u8 sceneType;
-    u16 sceneId;
+    u16 entrId;
     char* sceneName;
 } SceneAPI_SceneId;
 
@@ -27,11 +27,10 @@ typedef struct SceneAPI_CustomScene {
 } SceneAPI_CustomScene;
 
 typedef struct SceneAPI_Grotto {
-    // SceneId scene;
-    // u16 customSceneIndex;
-    // SceneAPI_SceneId exit;
     SceneAPI_SceneId fromScene;
     SceneAPI_SceneId toScene;
+    SceneId fromSceneId;
+    SceneId toSceneId;
     u16 spawnIndex;
     f32 x;
     f32 y;
@@ -41,11 +40,14 @@ typedef struct SceneAPI_Grotto {
 
 typedef struct SceneAPI_ExitOverride {
     SceneAPI_SceneId fromScene;
-    u16 exitIndex;
     SceneAPI_SceneId toScene;
+    SceneId fromSceneId;
+    SceneId toSceneId;
+    u16 exitIndex;
     u16 entranceIndex;
 } SceneAPI_ExitOverride;
 
-extern EntranceSceneId sceneAPI_entrances[];
+extern EntranceSceneId sceneAPI_sceneId_to_entranceId[];
+extern SceneId sceneAPI_entranceId_to_sceneId[];
 
 #endif /* SCENE_API_TYPES_H */

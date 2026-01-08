@@ -12,7 +12,6 @@ u32 sceneAPI_exitOverrideIterator = 0;
 u32 sceneAPI_grottosIterator = 0;
 
 u8 sceneAPI_isNextEntranceModified = false;
-u16 sceneAPI_modifiedNextEntrance = -1;
 u16 sceneAPI_savedGrottoEntrance = 0;
 
 PlayState* sceneAPI_play = NULL;
@@ -118,7 +117,7 @@ u16 SceneAPI_GetSceneIdByName(char* name) {
 u8 IsCurrentScene(PlayState* play, SceneAPI_SceneId scene) {
     switch (scene.sceneType) {
         case SCENEAPI_SCENETYPE_VANILLA:
-            return (play->sceneId == scene.sceneId);
+            return (play->sceneId == sceneAPI_entranceId_to_sceneId[scene.entrId]);
         case SCENEAPI_SCENETYPE_MODDED:
             return (play->sceneId == SCENEAPI_SCENE && sceneAPI_customSceneId == SceneAPI_GetSceneIdByName(scene.sceneName));
     }

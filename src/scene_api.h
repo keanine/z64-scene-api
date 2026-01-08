@@ -33,7 +33,6 @@ extern struct SceneAPI_ExitOverride sceneAPI_exitOverrides[500];
 extern struct SceneAPI_Grotto sceneAPI_warpGrottos[500];
 
 extern u8 sceneAPI_isNextEntranceModified;
-extern u16 sceneAPI_modifiedNextEntrance;
 extern u16 sceneAPI_savedGrottoEntrance;
 
 extern PlayState* sceneAPI_play;

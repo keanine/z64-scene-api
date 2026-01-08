@@ -36,10 +36,10 @@ RECOMP_HOOK_RETURN("DoorAna_WaitOpen") void return_DoorAna_WaitOpen() {
         }
         else {
             // sceneAPI_play->nextEntrance =  sceneAPI_currentGrotto->toScene.sceneId;
-            sceneAPI_play->nextEntrance =  ((((sceneAPI_entrances[sceneAPI_currentGrotto->toScene.sceneId]) & 0x7F) << 9) | (((sceneAPI_currentGrotto->spawnIndex) & 0x1F) << 4));
+            sceneAPI_play->nextEntrance =  ((((sceneAPI_currentGrotto->toScene.entrId) & 0x7F) << 9) | (((sceneAPI_currentGrotto->spawnIndex) & 0x1F) << 4));
             sceneAPI_nextCustomSceneId = SCENEAPI_VANILLA_ID;
             sceneAPI_customSceneId = SCENEAPI_VANILLA_ID;
-            recomp_printf("Grotto Destination (Vanilla): %d\n", sceneAPI_currentGrotto->toScene.sceneId);
+            recomp_printf("Grotto Destination (Vanilla): %d\n", sceneAPI_currentGrotto->toSceneId);
         }
     }
 }
