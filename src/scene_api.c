@@ -23,6 +23,35 @@ u16 sceneAPI_nextCustomSceneId = SCENEAPI_VANILLA_ID;
 
 u8 sceneAPI_modifiedElegyScene = false;
 
+u8 sceneAPI_expansionsEnabled = true;
+
+extern RestrictionFlags entryRestrictionFlag;
+extern SceneTableEntry entrySceneTableEntry;
+extern PersistentCycleSceneFlags entryPersistentCycleSceneFlags;
+
+
+static EntranceTableEntry sCustomEntrance0[] = { { SCENE_UNSET_01, 0, 0x0102 } };
+static EntranceTableEntry sCustomEntrance1[] = { { SCENE_UNSET_01, 1, 0x0102 } };
+static EntranceTableEntry sCustomEntrance2[] = { { SCENE_UNSET_01, 2, 0x0102 } };
+static EntranceTableEntry sCustomEntrance3[] = { { SCENE_UNSET_01, 3, 0x0102 } };
+static EntranceTableEntry sCustomEntrance4[] = { { SCENE_UNSET_01, 4, 0x0102 } };
+static EntranceTableEntry sCustomEntrance5[] = { { SCENE_UNSET_01, 5, 0x0102 } };
+static EntranceTableEntry sCustomEntrance6[] = { { SCENE_UNSET_01, 6, 0x0102 } };
+static EntranceTableEntry sCustomEntrance7[] = { { SCENE_UNSET_01, 7, 0x0102 } };
+static EntranceTableEntry sCustomEntrance8[] = { { SCENE_UNSET_01, 8, 0x0102 } };
+static EntranceTableEntry sCustomEntrance9[] = { { SCENE_UNSET_01, 9, 0x0102 } };
+static EntranceTableEntry sCustomEntrance10[] = { { SCENE_UNSET_01, 10, 0x0102 } };
+static EntranceTableEntry sCustomEntrance11[] = { { SCENE_UNSET_01, 11, 0x0102 } };
+
+static EntranceTableEntry* sCustomEntranceTable[] = {
+    sCustomEntrance0,sCustomEntrance1,sCustomEntrance2,
+    sCustomEntrance3,sCustomEntrance4,sCustomEntrance5,
+    sCustomEntrance6,sCustomEntrance7,sCustomEntrance8,
+    sCustomEntrance9,sCustomEntrance10,sCustomEntrance11,
+};
+
+extern SceneEntranceTableEntry sSceneEntranceTable[];
+
 // Used to register custom scenes from external scene mods
 RECOMP_CALLBACK("*", recomp_on_init)
 void SceneAPI_RecompInit() {
@@ -33,6 +62,11 @@ void SceneAPI_RecompInit() {
     
     // Register warp grottos and exit overrides
     SceneAPI_PostInit();
+
+    // In the future, custom scenes will need to send this information so it can be replaced when a scene is loaded.
+    sRestrictionFlags[SCENE_UNSET_01] = entryRestrictionFlag;
+    gSceneTable[SCENE_UNSET_01] = entrySceneTableEntry;
+    sPersistentCycleSceneFlags[SCENE_UNSET_01] = entryPersistentCycleSceneFlags;
     
     recomp_printf("== Scene API Initialized ==\n\n");
 }
@@ -40,7 +74,12 @@ void SceneAPI_RecompInit() {
 // Override the sceneSegment as well as setting the customSceneId
 RECOMP_HOOK("Play_InitScene") void on_init_scene(PlayState* play, s32 spawn) {
     recomp_printf("Spawning into scene %d (spawn %d)\n", play->sceneId, spawn);
-    
+    sceneAPI_play = play;
+
+    // Fix the entrance table, since it seems to get overwritten after recomp_on_init
+    sSceneEntranceTable[SCENEAPI_SCENE_ENTR] = (SceneEntranceTableEntry)SCENEAPI_DEFINE_ENTRANCE(sCustomEntranceTable);
+    SceneEntranceTableEntry entry = sSceneEntranceTable[SCENEAPI_SCENE_ENTR];
+
     if (sceneAPI_nextCustomSceneId != SCENEAPI_VANILLA_ID) {
         if (play->sceneId == SCENEAPI_SCENE) {
             sceneAPI_customSceneId = sceneAPI_nextCustomSceneId;
@@ -106,8 +145,8 @@ RECOMP_HOOK_RETURN("Message_DrawMain") void return_Message_DrawMain() {
 }
 
 u16 SceneAPI_GetSceneIdByName(char* name) {
-    for (u16 i = 0; i < ARRAY_COUNT(sceneAPI_customScenes); i++) {
-        if (sceneAPI_customScenes[i].sceneName == name) {
+    for (u16 i = 0; i < sceneAPI_customSceneIterator; i++) {
+        if (strcmp(sceneAPI_customScenes[i].sceneName, name) == 0) {
             return i;
         }
     }

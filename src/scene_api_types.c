@@ -1,12 +1,17 @@
 #include "scene_api_types.h"
 
+// This exists for reasons. I don't remember why but I was having issues with ENTRANCE() and Entrance_GetSceneId()
+
 // Pass in a SCENE_ value to get the ENTR value in return
 EntranceSceneId sceneAPI_sceneId_to_entranceId[] = {
     /* Southern Swamp (Clear) */
     /* SCENE_20SICHITAI2 */
     ENTR_SCENE_SOUTHERN_SWAMP_CLEARED,
 
-    /* SCENE_UNSET_01 */ 0,
+    /* All Custom Scenes */
+    /* SCENE_UNSET_01 */
+    ENTR_SCENE_UNSET_08,
+
     /* SCENE_UNSET_02 */ 0,
     /* SCENE_UNSET_03 */ 0,
     /* SCENE_UNSET_04 */ 0,
@@ -438,7 +443,7 @@ SceneId sceneAPI_entranceId_to_sceneId[] = {
     /* 0x05 ENTR_SCENE_BENEATH_THE_GRAVERYARD */        SCENE_HAKASHITA,
     /* 0x06 ENTR_SCENE_SOUTHERN_SWAMP_CLEARED */        SCENE_20SICHITAI2,
     /* 0x07 ENTR_SCENE_CURIOSITY_SHOP */                SCENE_AYASHIISHOP,
-    /* 0x08 ENTR_SCENE_UNSET_08 */                      0,
+    /* 0x08 ENTR_SCENE_UNSET_08 */                      SCENE_UNSET_01,
     /* 0x09 ENTR_SCENE_UNSET_09 */                      0,
     /* 0x0A ENTR_SCENE_GROTTOS */                       SCENE_KAKUSIANA,
     /* 0x0B ENTR_SCENE_UNSET_0B */                      0,

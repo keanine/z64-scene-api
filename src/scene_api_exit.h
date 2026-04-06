@@ -6,6 +6,4 @@
 #include "recomputils.h"
 #include "PR/gbi.h"
 
-
-
 #endif /* SCENE_API_EXPORTS_H */

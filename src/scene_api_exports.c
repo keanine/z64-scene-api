@@ -14,6 +14,7 @@ u16 SceneAPI_RegisterExitOverride(SceneAPI_SceneId fromScene, u16 exitIndex, Sce
     SceneId fromId = SCENEAPI_SCENE;
     SceneId toId = SCENEAPI_SCENE;
 
+    // Entrance_GetSceneIdAbsolute(fromScene.entrId)
     if (fromScene.sceneType == SCENEAPI_SCENETYPE_VANILLA) fromId = sceneAPI_entranceId_to_sceneId[fromScene.entrId];
     if (toScene.sceneType == SCENEAPI_SCENETYPE_VANILLA) toId = sceneAPI_entranceId_to_sceneId[toScene.entrId];
 
@@ -33,9 +34,3 @@ u16 SceneAPI_RegisterWarpGrotto(SceneAPI_SceneId fromScene, SceneAPI_SceneId toS
     sceneAPI_warpGrottos[sceneAPI_grottosIterator++] = (SceneAPI_Grotto){ fromScene, toScene, fromId, toId, spawnIndex, x, y, z, NULL };
     return slot;
 }
-
-// u16 SceneAPI_RegisterWarpGrottoToCustomScene(char* sceneName, SceneAPI_SceneId exit, f32 x, f32 y, f32 z) {
-//     u16 slot = sceneAPI_grottosIterator;
-//     sceneAPI_warpGrottos[sceneAPI_grottosIterator++] = (SceneAPI_Grotto){ SCENEAPI_SCENE, SceneAPI_GetSceneIdByName(sceneName), exit, x, y, z, NULL };
-//     return slot;
-// }

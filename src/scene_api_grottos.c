@@ -30,13 +30,12 @@ RECOMP_HOOK("DoorAna_WaitOpen") void on_DoorAna_WaitOpen(DoorAna* this, PlayStat
 RECOMP_HOOK_RETURN("DoorAna_WaitOpen") void return_DoorAna_WaitOpen() {
     if (sceneAPI_currentGrotto != NULL && sceneAPI_savedGrottoEntrance != sceneAPI_play->nextEntrance) {
         if (sceneAPI_currentGrotto->toScene.sceneType == SCENEAPI_SCENETYPE_MODDED) {
-            sceneAPI_play->nextEntrance = ((((SCENEAPI_SCENE_ENTR) & 0x7F) << 9) | (((sceneAPI_currentGrotto->spawnIndex) & 0x1F) << 4));
+            sceneAPI_play->nextEntrance = SCENEAPI_ENTRANCE(SCENEAPI_SCENE_ENTR, sceneAPI_currentGrotto->spawnIndex);
             sceneAPI_nextCustomSceneId = SceneAPI_GetSceneIdByName(sceneAPI_currentGrotto->toScene.sceneName);
             recomp_printf("Grotto Destination (Modded): %s\n", sceneAPI_currentGrotto->toScene.sceneName);
         }
-        else {
-            // sceneAPI_play->nextEntrance =  sceneAPI_currentGrotto->toScene.sceneId;
-            sceneAPI_play->nextEntrance =  ((((sceneAPI_currentGrotto->toScene.entrId) & 0x7F) << 9) | (((sceneAPI_currentGrotto->spawnIndex) & 0x1F) << 4));
+        else {            
+            sceneAPI_play->nextEntrance = SCENEAPI_ENTRANCE(sceneAPI_currentGrotto->toScene.entrId, sceneAPI_currentGrotto->spawnIndex);
             sceneAPI_nextCustomSceneId = SCENEAPI_VANILLA_ID;
             sceneAPI_customSceneId = SCENEAPI_VANILLA_ID;
             recomp_printf("Grotto Destination (Vanilla): %d\n", sceneAPI_currentGrotto->toSceneId);

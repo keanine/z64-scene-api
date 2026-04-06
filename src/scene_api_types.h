@@ -47,6 +47,20 @@ typedef struct SceneAPI_ExitOverride {
     u16 entranceIndex;
 } SceneAPI_ExitOverride;
 
+typedef struct {
+    /* 0x0 */ u8 scene;
+    /* 0x1 */ u8 flags1;
+    /* 0x2 */ u8 flags2;
+    /* 0x3 */ u8 flags3;
+} RestrictionFlags; // size = 0x4
+
+typedef struct PersistentCycleSceneFlags {
+    /* 0x0 */ u32 switch0;
+    /* 0x4 */ u32 switch1;
+    /* 0x8 */ u32 chest;
+    /* 0xC */ u32 collectible;
+} PersistentCycleSceneFlags; // size = 0x10
+
 extern EntranceSceneId sceneAPI_sceneId_to_entranceId[];
 extern SceneId sceneAPI_entranceId_to_sceneId[];
 
