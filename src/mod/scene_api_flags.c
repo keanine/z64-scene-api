@@ -190,6 +190,20 @@ void GetSceneFlags(ActorContext* actorCtx, u32 customSceneId) {
     actorCtx->sceneFlags.switches[1]    = sceneAPI_sceneFlags[customSceneId].cycleSwitch1;
     actorCtx->sceneFlags.clearedRoom    = sceneAPI_sceneFlags[customSceneId].cycleClearedRoom;
     actorCtx->sceneFlags.collectible[0] = sceneAPI_sceneFlags[customSceneId].cycleCollectible;
+
+    gSaveContext.cycleSceneFlags[SCENEAPI_SCENE].chest = sceneAPI_sceneFlags[customSceneId].cycleChest;
+    gSaveContext.cycleSceneFlags[SCENEAPI_SCENE].switch0 = sceneAPI_sceneFlags[customSceneId].cycleSwitch0;
+    gSaveContext.cycleSceneFlags[SCENEAPI_SCENE].switch1 = sceneAPI_sceneFlags[customSceneId].cycleSwitch1;
+    gSaveContext.cycleSceneFlags[SCENEAPI_SCENE].clearedRoom = sceneAPI_sceneFlags[customSceneId].cycleClearedRoom;
+    gSaveContext.cycleSceneFlags[SCENEAPI_SCENE].collectible = sceneAPI_sceneFlags[customSceneId].cycleCollectible;
+
+    gSaveContext.save.saveInfo.permanentSceneFlags[SCENEAPI_SCENE].chest = sceneAPI_sceneFlags[customSceneId].permanentChest;
+    gSaveContext.save.saveInfo.permanentSceneFlags[SCENEAPI_SCENE].switch0 = sceneAPI_sceneFlags[customSceneId].permanentSwitch0;
+    gSaveContext.save.saveInfo.permanentSceneFlags[SCENEAPI_SCENE].switch1 = sceneAPI_sceneFlags[customSceneId].permanentSwitch1;
+    gSaveContext.save.saveInfo.permanentSceneFlags[SCENEAPI_SCENE].clearedRoom = sceneAPI_sceneFlags[customSceneId].permanentClearedRoom;
+    gSaveContext.save.saveInfo.permanentSceneFlags[SCENEAPI_SCENE].collectible = sceneAPI_sceneFlags[customSceneId].permanentCollectible;
+    gSaveContext.save.saveInfo.permanentSceneFlags[SCENEAPI_SCENE].unk_14 = sceneAPI_sceneFlags[customSceneId].permanentUnk14;
+    gSaveContext.save.saveInfo.permanentSceneFlags[SCENEAPI_SCENE].rooms = sceneAPI_sceneFlags[customSceneId].permanentRooms;
 }
 
 // Copy actorCtx.sceneFlags into sceneAPI_sceneFlags[i].cycle
