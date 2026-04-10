@@ -156,6 +156,10 @@ u16 SceneAPI_GetSceneIdByName(char* name) {
     return -1;
 }
 
+char* SceneAPI_GetSceneNameById(u32 sceneId) {
+    return sceneAPI_customScenes[sceneId].sceneName;
+}
+
 u8 IsCurrentScene(PlayState* play, SceneAPI_SceneId scene) {
     switch (scene.sceneType) {
         case SCENEAPI_SCENETYPE_VANILLA:

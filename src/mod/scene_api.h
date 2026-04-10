@@ -11,6 +11,7 @@
 
 #include <z64scene.h>
 
+extern char* SceneAPI_GetSceneNameById(u32 sceneId);
 extern u16 SceneAPI_GetSceneIdByName(char* name);
 extern u8 IsCurrentScene(PlayState* play, SceneAPI_SceneId scene);
 

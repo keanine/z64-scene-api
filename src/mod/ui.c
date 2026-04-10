@@ -103,7 +103,7 @@ void update_ui(PlayState* play) {
     recompui_close_context(context);
 }
 
-extern void ClearCustomSceneFlags(PlayState* play);
+extern void DebugClearCurrentSceneFlags(PlayState* play);
 
 // Update the UI every so often. RecompUI can crash when updating so doesn't print every frame.
 u32 printDelay = 50;
@@ -117,7 +117,7 @@ RECOMP_HOOK("Player_UpdateCommon") void on_Player_UpdateCommonUI(Player* this, P
     if (CHECK_BTN_ANY(input->press.button, BTN_L)) {
         if (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID) {
             recomp_printf("Flags cleared in custom scene (%s).\n", sceneAPI_customScenes[sceneAPI_customSceneId].sceneName);
-            ClearCustomSceneFlags(play);
+            DebugClearCurrentSceneFlags(play);
         }
     }
 }
