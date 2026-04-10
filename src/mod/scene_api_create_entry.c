@@ -22,18 +22,19 @@ extern u8 _Z2_INSIDETOWERSegmentRomEnd[1];
 #define RESTRICTIONS_NO_DOUBLE_TIME RESTRICTIONS_SET(0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0)
 
 #define PERSISTENT_CYCLE_FLAGS_SET(switch0, switch1, chest, collectible) { switch0, switch1, chest, collectible }
+#define PERSISTENT_CYCLE_FLAGS_NONE PERSISTENT_CYCLE_FLAGS_SET(0, 0, 0, 0)
 
 #define DEFINE_SCENE(_name, enumValue, _textId, _drawConfig, restrictionFlags, _persistentCycleFlags) \
     { enumValue, restrictionFlags }
-RestrictionFlags entryRestrictionFlag = DEFINE_SCENE(Z2_INSIDETOWER, SCENEAPI_SCENE, 0, SCENE_DRAW_CFG_MAT_ANIM, RESTRICTIONS_SET(0, 0, 0, 0, 3, 3, 3, 3, 3, 0, 0, 0), PERSISTENT_CYCLE_FLAGS_SET(1 << 0, 0, 0, 0));
+RestrictionFlags entryRestrictionFlag = DEFINE_SCENE(Z2_INSIDETOWER, SCENE_UNSET_01, 0, SCENE_DRAW_CFG_MAT_ANIM, RESTRICTIONS_NONE, PERSISTENT_CYCLE_FLAGS_NONE);
 #undef DEFINE_SCENE
 
 #define DEFINE_SCENE(name, _enumValue, textId, drawConfig, _restrictionFlags, _persistentCycleFlags) \
     { { SEGMENT_ROM_START(name), SEGMENT_ROM_END(name) }, textId, 0, drawConfig, 0, 0 }
-SceneTableEntry entrySceneTableEntry = DEFINE_SCENE(Z2_INSIDETOWER, SCENEAPI_SCENE, 0, SCENE_DRAW_CFG_MAT_ANIM, RESTRICTIONS_SET(0, 0, 0, 0, 3, 3, 3, 3, 3, 0, 0, 0), PERSISTENT_CYCLE_FLAGS_SET(1 << 0, 0, 0, 0));
+SceneTableEntry entrySceneTableEntry = DEFINE_SCENE(Z2_INSIDETOWER, SCENE_UNSET_01, 0, SCENE_DRAW_CFG_MAT_ANIM, RESTRICTIONS_NONE, PERSISTENT_CYCLE_FLAGS_NONE);
 #undef DEFINE_SCENE
 
 #define DEFINE_SCENE(_name, _enumValue, _textId, _drawConfig, _restrictionFlags, persistentCycleFlags) \
     persistentCycleFlags
-PersistentCycleSceneFlags entryPersistentCycleSceneFlags = DEFINE_SCENE(Z2_INSIDETOWER, SCENEAPI_SCENE, 0, SCENE_DRAW_CFG_MAT_ANIM, RESTRICTIONS_SET(0, 0, 0, 0, 3, 3, 3, 3, 3, 0, 0, 0), PERSISTENT_CYCLE_FLAGS_SET(1 << 0, 0, 0, 0));
+PersistentCycleSceneFlags entryPersistentCycleSceneFlags = DEFINE_SCENE(Z2_INSIDETOWER, SCENE_UNSET_01, 0, SCENE_DRAW_CFG_MAT_ANIM, RESTRICTIONS_NONE, PERSISTENT_CYCLE_FLAGS_NONE);
 #undef DEFINE_SCENE

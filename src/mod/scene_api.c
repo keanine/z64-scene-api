@@ -77,8 +77,11 @@ RECOMP_HOOK("Play_InitScene") void on_init_scene(PlayState* play, s32 spawn) {
     sceneAPI_play = play;
 
     // Fix the entrance table, since it seems to get overwritten after recomp_on_init
-    sSceneEntranceTable[SCENEAPI_SCENE_ENTR] = (SceneEntranceTableEntry)SCENEAPI_DEFINE_ENTRANCE(sCustomEntranceTable);
-    SceneEntranceTableEntry entry = sSceneEntranceTable[SCENEAPI_SCENE_ENTR];
+    sSceneEntranceTable[ENTR_SCENE_UNSET_08] = (SceneEntranceTableEntry)SCENEAPI_DEFINE_ENTRANCE(sCustomEntranceTable);
+    SceneEntranceTableEntry entry = sSceneEntranceTable[ENTR_SCENE_UNSET_08];
+
+    // Reset the customSceneId to default
+    sceneAPI_customSceneId = SCENEAPI_VANILLA_ID;
 
     if (sceneAPI_nextCustomSceneId != SCENEAPI_VANILLA_ID) {
         if (play->sceneId == SCENEAPI_SCENE) {
