@@ -120,6 +120,7 @@ RECOMP_HOOK_RETURN("func_80145698") void return_func_80145698() {
 
 
 void LoadMainFlagsFromKV() {
+    recomp_printf("Call LoadMainFlagsFromKV\n");
     u16 i;
     for (i = 0; i < sceneAPI_customSceneIterator; i++) {
         u32 len = strlen("SceneAPI.") + strlen(SceneAPI_GetSceneNameById(i));
@@ -135,6 +136,7 @@ void LoadMainFlagsFromKV() {
 }
 
 void LoadOwlFlagsFromKV() {
+    recomp_printf("Call LoadOwlFlagsFromKV\n");
     u16 i;
     for (i = 0; i < sceneAPI_customSceneIterator; i++) {
         u32 len = strlen("SceneAPI.owl.") + strlen(SceneAPI_GetSceneNameById(i));
@@ -151,6 +153,7 @@ void LoadOwlFlagsFromKV() {
 
 
 void SaveMainFlagsToKV() {
+    recomp_printf("Call SaveMainFlagsToKV\n");
     u16 i;
     for (i = 0; i < sceneAPI_customSceneIterator; i++) {
         u32 len = strlen("SceneAPI.") + strlen(SceneAPI_GetSceneNameById(i));
@@ -161,6 +164,7 @@ void SaveMainFlagsToKV() {
 }
 
 void SaveOwlFlagsToKV() {
+    recomp_printf("Call SaveOwlFlagsToKV\n");
     u16 i;
     for (i = 0; i < sceneAPI_customSceneIterator; i++) {
         u32 len = strlen("SceneAPI.owl.") + strlen(SceneAPI_GetSceneNameById(i));
@@ -172,6 +176,7 @@ void SaveOwlFlagsToKV() {
 
 
 void DeleteOwlFlagsFromKV() {
+    recomp_printf("Call DeleteOwlFlagsFromKV\n");
     u16 i;
     for (i = 0; i < sceneAPI_customSceneIterator; i++) {
         u32 len = strlen("SceneAPI.owl.") + strlen(SceneAPI_GetSceneNameById(i));
@@ -185,6 +190,7 @@ void DeleteOwlFlagsFromKV() {
 // Should copy across cycle and permanent into saveContext here too, for actors like z_en_elfgrp.c
 // Copy sceneAPI_sceneFlags[i].cycle into actorCtx.sceneFlags
 void GetSceneFlags(ActorContext* actorCtx, u32 customSceneId) {
+    recomp_printf("Call GetSceneFlags\n");
     actorCtx->sceneFlags.chest =          sceneAPI_sceneFlags[customSceneId].cycleChest;
     actorCtx->sceneFlags.switches[0] =    sceneAPI_sceneFlags[customSceneId].cycleSwitch0;
     actorCtx->sceneFlags.switches[1] =    sceneAPI_sceneFlags[customSceneId].cycleSwitch1;
@@ -208,6 +214,7 @@ void GetSceneFlags(ActorContext* actorCtx, u32 customSceneId) {
 
 // Copy actorCtx.sceneFlags into sceneAPI_sceneFlags[i].cycle
 void SetSceneFlags(ActorContext* actorCtx, u32 customSceneId) {
+    recomp_printf("Call SetSceneFlags\n");
     sceneAPI_sceneFlags[customSceneId].cycleChest       = actorCtx->sceneFlags.chest;
     sceneAPI_sceneFlags[customSceneId].cycleSwitch0     = actorCtx->sceneFlags.switches[0];
     sceneAPI_sceneFlags[customSceneId].cycleSwitch1     = actorCtx->sceneFlags.switches[1];
@@ -224,6 +231,7 @@ void SetSceneFlags(ActorContext* actorCtx, u32 customSceneId) {
 }
 
 void DeleteCycleFlags() {
+    recomp_printf("Call DeleteCycleFlags\n");
     u16 i;
     for (i = 0; i < sceneAPI_customSceneIterator; i++) {
         sceneAPI_sceneFlags[i] = SCENE_FLAGS_CLEAR_CYCLE(sceneAPI_sceneFlags[i]);
@@ -231,6 +239,7 @@ void DeleteCycleFlags() {
 }
 
 void CycleToPermanent() {
+    recomp_printf("Call CycleToPermanent\n");
     u16 i;
     for (i = 0; i < sceneAPI_customSceneIterator; i++) {
         sceneAPI_sceneFlags[i].permanentChest = sceneAPI_sceneFlags[i].cycleChest;
@@ -242,6 +251,7 @@ void CycleToPermanent() {
 }
 
 void PermanentToCycle() {
+    recomp_printf("Call PermanentToCycle\n");
     u16 i;
     for (i = 0; i < sceneAPI_customSceneIterator; i++) {
         sceneAPI_sceneFlags[i].cycleChest = sceneAPI_sceneFlags[i].permanentChest;
@@ -253,9 +263,44 @@ void PermanentToCycle() {
 }
 
 void DebugClearCurrentSceneFlags(PlayState* play) {
+    recomp_printf("Call DebugClearCurrentSceneFlags\n");
     play->actorCtx.sceneFlags.chest = 0;
     play->actorCtx.sceneFlags.switches[0] = 0;
     play->actorCtx.sceneFlags.switches[1] = 0;
     play->actorCtx.sceneFlags.clearedRoom = 0;
     play->actorCtx.sceneFlags.collectible[0] = 0;
+}
+
+// AUTOSAVE
+#define SAVE_TYPE_AUTOSAVE 2
+
+RECOMP_CALLBACK("*", recomp_on_autosave) void on_SaveAutosave(PlayState* play) {
+    if (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID) {
+        SetSceneFlags(&play->actorCtx, sceneAPI_customSceneId);
+    }
+
+    SaveOwlFlagsToKV();
+}
+
+// HOOK void Sram_OpenSave()
+// if (gSaveContext.save.isOwlSave == SAVE_TYPE_AUTOSAVE)
+// change gSaveContext.save.entrance to clocktown
+
+// RETURN void Sram_OpenSave()
+// if (gSaveContext.save.isOwlSave == SAVE_TYPE_AUTOSAVE)
+// restore gSaveContext.save.entrance
+
+s32 sEntrance;
+RECOMP_HOOK("Sram_OpenSave") void on_LoadAutosave(FileSelectState* fileSelect, SramContext* sramCtx) {
+    recomp_printf("on load autosave\n");
+    if (gSaveContext.save.isOwlSave == SAVE_TYPE_AUTOSAVE) {
+        // sEntrance = gSaveContext.save.entrance;
+        // gSaveContext.save.entrance = ENTRANCE(SOUTH_CLOCK_TOWN, 0);
+    }
+}
+RECOMP_HOOK_RETURN("Sram_OpenSave") void return_LoadAutosave() {
+    recomp_printf("return load autosave\n");
+    if (gSaveContext.save.isOwlSave == SAVE_TYPE_AUTOSAVE) {
+        // gSaveContext.save.entrance = sEntrance;
+    }
 }
