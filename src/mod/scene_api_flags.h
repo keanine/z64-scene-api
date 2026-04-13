@@ -17,12 +17,13 @@ extern void LoadOwlFlagsFromKV();
 extern void SaveMainFlagsToKV();
 extern void SaveOwlFlagsToKV();
 extern void DeleteOwlFlagsFromKV();
-extern void GetSceneFlags(ActorContext* actorCtx, u32 customSceneId);
-extern void SetSceneFlags(ActorContext* actorCtx, u32 customSceneId);
-extern void DeleteCycleFlags();
+extern void ClearCycleFlags();
 
 extern void CycleToPermanent();
 extern void PermanentToCycle();
+
+extern void GetSceneFlags(ActorContext* actorCtx, u32 customSceneId);
+extern void SetSceneFlags(ActorContext* actorCtx, u32 customSceneId);
 
 extern void DebugClearCurrentSceneFlags(PlayState* play);
 
