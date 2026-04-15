@@ -15,14 +15,11 @@ extern char* SceneAPI_GetSceneNameById(u32 sceneId);
 extern u16 SceneAPI_GetSceneIdByName(char* name);
 extern u8 IsCurrentScene(PlayState* play, SceneAPI_SceneId scene);
 
+extern void InitSceneVariables();
+extern RestrictionFlags GetRestrictionsFromCustomScene(u16 customSceneId);
+
 #define SCENEAPI_SCENE SCENE_UNSET_01
 #define SCENEAPI_SCENE_ENTR ENTR_SCENE_UNSET_08
-
-// #define SCENEAPI_SCENE SCENE_MITURIN
-// #define SCENEAPI_SCENE_ENTR ENTR_SCENE_WOODFALL_TEMPLE
-
-// #define SCENEAPI_SCENE SCENE_INSIDETOWER
-// #define SCENEAPI_SCENE_ENTR ENTR_SCENE_CLOCK_TOWER_INTERIOR
 
 #define SCENEAPI_VANILLA_ID 65535
 
@@ -58,6 +55,19 @@ extern SceneTableEntry gSceneTable[SCENE_MAX];
 extern PersistentCycleSceneFlags sPersistentCycleSceneFlags[SCENE_MAX];
 
 #define SCENEAPI_DEFINE_ENTRANCE(entranceTable) \
-    { ARRAY_COUNT(entranceTable), entranceTable, ((void*)0) }
+    { ARRAY_COUNT(entranceTable), entranceTable, NULL }
+    
+#define RESTRICTIONS_SET(hGauge, bButton, aButton, tradeItems, songOfTime, songOfDoubleTime, invSongOfTime, \
+                         songOfSoaring, songOfStorms, masks, pictoBox, all)                                 \
+    ((((hGauge)&3) << 6) | (((bButton)&3) << 4) | (((aButton)&3) << 2) | (((tradeItems)&3) << 0)),          \
+        ((((songOfTime)&3) << 6) | (((songOfDoubleTime)&3) << 4) | (((invSongOfTime)&3) << 2) |             \
+         (((songOfSoaring)&3) << 0)),                                                                       \
+        ((((songOfStorms)&3) << 6) | (((masks)&3) << 4) | (((pictoBox)&3) << 2) | (((all)&3) << 0))
+
+// Common patterns
+#define RESTRICTIONS_NONE RESTRICTIONS_SET(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+#define RESTRICTIONS_INDOORS RESTRICTIONS_SET(0, 1, 0, 0, 0, 3, 0, 0, 3, 0, 0, 1)
+#define RESTRICTIONS_MOON RESTRICTIONS_SET(0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0)
+#define RESTRICTIONS_NO_DOUBLE_TIME RESTRICTIONS_SET(0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0)
 
 #endif /* SCENE_API_H */

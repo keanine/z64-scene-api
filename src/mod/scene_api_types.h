@@ -14,17 +14,44 @@ typedef struct SceneAPI_SceneId {
     char* sceneName;
 } SceneAPI_SceneId;
 
-typedef struct SceneAPI_SceneProperties {
-    u8 enableElegyOfEmptiness;
-    u8 enableSongOfSoaring;
-} SceneAPI_SceneProperties;
+
+typedef struct SceneAPI_ScenePermissions {
+    // Restriction Flags
+    bool allowButtonB;
+    bool allowTradeItems;
+    bool allowSongOfTime;
+    bool allowSongOfDoubleTime;
+    bool allowInvertedSongOfTime;
+    bool allowSongOfSoaring;
+    bool allowSongOfStorms;
+    bool allowMasks;
+    bool allowPictoBox;
+    bool allowAll;
+
+    // Restriction Flags not implemented in MM
+        // bool enableHeartGauge;
+        // bool enableButtonA;
+
+    // Additional Flags
+    bool allowElegyOfEmptiness;
+} SceneAPI_ScenePermissions;
+
+typedef struct SceneAPI_ScenePersistentFlags {
+    u32 chest;
+    u32 switch0;
+    u32 switch1;
+    u32 collectible;
+} SceneAPI_ScenePersistentFlags;
+
 
 typedef struct SceneAPI_CustomScene {
     char* sceneName;
     SceneCmd* sceneSegment;
     SceneCmd** roomList;
-    SceneAPI_SceneProperties properties;
+    SceneAPI_ScenePermissions permissions;
+    SceneAPI_ScenePersistentFlags persistentFlags;
 } SceneAPI_CustomScene;
+
 
 typedef struct SceneAPI_Grotto {
     SceneAPI_SceneId fromScene;
@@ -38,6 +65,7 @@ typedef struct SceneAPI_Grotto {
     Actor* actor;
 } SceneAPI_Grotto;
 
+
 typedef struct SceneAPI_ExitOverride {
     SceneAPI_SceneId fromScene;
     SceneAPI_SceneId toScene;
@@ -47,6 +75,7 @@ typedef struct SceneAPI_ExitOverride {
     u16 entranceIndex;
 } SceneAPI_ExitOverride;
 
+
 typedef struct {
     /* 0x0 */ u8 scene;
     /* 0x1 */ u8 flags1;
@@ -54,12 +83,14 @@ typedef struct {
     /* 0x3 */ u8 flags3;
 } RestrictionFlags; // size = 0x4
 
+
 typedef struct PersistentCycleSceneFlags {
     /* 0x0 */ u32 switch0;
     /* 0x4 */ u32 switch1;
     /* 0x8 */ u32 chest;
     /* 0xC */ u32 collectible;
 } PersistentCycleSceneFlags; // size = 0x10
+
 
 extern EntranceSceneId sceneAPI_sceneId_to_entranceId[];
 extern SceneId sceneAPI_entranceId_to_sceneId[];

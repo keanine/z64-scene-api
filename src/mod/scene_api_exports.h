@@ -8,8 +8,15 @@
 
 #include "scene_api_types.h"
 
-RECOMP_EXPORT u16 SceneAPI_RegisterScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[], SceneAPI_SceneProperties properties);
+RECOMP_EXPORT u16 SceneAPI_RegisterScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[], 
+    SceneAPI_ScenePermissions permissions, SceneAPI_ScenePersistentFlags persistentFlags);
 RECOMP_EXPORT u16 SceneAPI_RegisterExitOverride(SceneAPI_SceneId fromScene, u16 exitIndex, SceneAPI_SceneId toScene, u16 entranceIndex);
 RECOMP_EXPORT u16 SceneAPI_RegisterWarpGrotto(SceneAPI_SceneId fromScene, SceneAPI_SceneId toScene, u16 spawnIndex, f32 x, f32 y, f32 z);
 
+RECOMP_EXPORT void SceneAPI_SetPermissionsNone(SceneAPI_ScenePermissions* outPermissions);
+RECOMP_EXPORT void SceneAPI_SetPermissionsAll(SceneAPI_ScenePermissions* outPermissions);
+RECOMP_EXPORT void SceneAPI_SetPermissionsDefault(SceneAPI_ScenePermissions* outPermissions);
+RECOMP_EXPORT void SceneAPI_SetPermissionsIndoors(SceneAPI_ScenePermissions* outPermissions);
+RECOMP_EXPORT void SceneAPI_SetPermissionsMoon(SceneAPI_ScenePermissions* outPermissions);
+RECOMP_EXPORT void SceneAPI_SetPermissionsNoDoubleTime(SceneAPI_ScenePermissions* outPermissions);
 #endif /* SCENE_API_EXPORTS_H */

@@ -62,13 +62,32 @@ void SceneAPI_RecompInit() {
     
     // Register warp grottos and exit overrides
     SceneAPI_PostInit();
-
-    // In the future, custom scenes will need to send this information so it can be replaced when a scene is loaded.
-    sRestrictionFlags[SCENE_UNSET_01] = entryRestrictionFlag;
-    gSceneTable[SCENE_UNSET_01] = entrySceneTableEntry;
-    sPersistentCycleSceneFlags[SCENE_UNSET_01] = entryPersistentCycleSceneFlags;
+    
+    // Set the custom scenes table entry
+    gSceneTable[SCENEAPI_SCENE] = entrySceneTableEntry;
     
     recomp_printf("== Scene API Initialized ==\n\n");
+}
+
+RestrictionFlags GetRestrictionsFromCustomScene(u16 customSceneId) {
+    SceneAPI_ScenePermissions permissions = sceneAPI_customScenes[customSceneId].permissions;
+
+    return (RestrictionFlags){ SCENEAPI_SCENE,
+        RESTRICTIONS_SET(
+            0,
+            permissions.allowButtonB ? 0 : 1,
+            0,
+            permissions.allowTradeItems ? 0 : 1,
+            permissions.allowSongOfTime ? 0 : 1,
+            permissions.allowSongOfDoubleTime ? 0 : 1,
+            permissions.allowInvertedSongOfTime ? 0 : 1,
+            permissions.allowSongOfSoaring ? 0 : 1,
+            permissions.allowSongOfStorms ? 0 : 1,
+            permissions.allowMasks ? 0 : 1,
+            permissions.allowPictoBox ? 0 : 1,
+            permissions.allowAll ? 0 : 1
+        )
+    };
 }
 
 // Override the sceneSegment as well as setting the customSceneId
@@ -76,9 +95,9 @@ RECOMP_HOOK("Play_InitScene") void on_init_scene(PlayState* play, s32 spawn) {
     recomp_printf("Spawning into scene %d (spawn %d)\n", play->sceneId, spawn);
     sceneAPI_play = play;
 
-    // Fix the entrance table, since it seems to get overwritten after recomp_on_init
-    sSceneEntranceTable[ENTR_SCENE_UNSET_08] = (SceneEntranceTableEntry)SCENEAPI_DEFINE_ENTRANCE(sCustomEntranceTable);
-    SceneEntranceTableEntry entry = sSceneEntranceTable[ENTR_SCENE_UNSET_08];
+    // Set the custom scenes entrance table // THIS SHOULD HAPPEN ONCE, AFTER RECOMP_INIT
+    sSceneEntranceTable[SCENEAPI_SCENE_ENTR] = (SceneEntranceTableEntry)SCENEAPI_DEFINE_ENTRANCE(sCustomEntranceTable);
+    SceneEntranceTableEntry entry = sSceneEntranceTable[SCENEAPI_SCENE_ENTR];
 
     // Reset the customSceneId to default
     sceneAPI_customSceneId = SCENEAPI_VANILLA_ID;
@@ -87,6 +106,9 @@ RECOMP_HOOK("Play_InitScene") void on_init_scene(PlayState* play, s32 spawn) {
         if (play->sceneId == SCENEAPI_SCENE) {
             sceneAPI_customSceneId = sceneAPI_nextCustomSceneId;
             sceneAPI_nextCustomSceneId = SCENEAPI_VANILLA_ID;
+
+            sRestrictionFlags[SCENEAPI_SCENE] = GetRestrictionsFromCustomScene(sceneAPI_customSceneId);
+
             // No need to free the original memory since it's part of an arena and will get freed automatically when resetting between scenes.
             play->sceneSegment = sceneAPI_customScenes[sceneAPI_customSceneId].sceneSegment;
         }
@@ -128,7 +150,7 @@ RECOMP_HOOK("Message_DrawMain") void on_Message_DrawMain(PlayState* play, Gfx** 
     if (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID && play->sceneId == SCENEAPI_SCENE) {
         if (msgCtx->msgLength != 0) {
             if (msgCtx->msgMode == MSGMODE_18) {
-                if (sceneAPI_customScenes[sceneAPI_customSceneId].properties.enableElegyOfEmptiness) {
+                if (sceneAPI_customScenes[sceneAPI_customSceneId].permissions.allowElegyOfEmptiness) {
                     sceneAPI_modifiedElegyScene = true;
                     play->sceneId = SCENE_F40;
                 }

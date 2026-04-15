@@ -21,6 +21,7 @@ extern void ClearCycleFlags();
 
 extern void CycleToPermanent();
 extern void PermanentToCycle();
+extern void ResetCycleToPersistent();
 
 extern void GetSceneFlags(ActorContext* actorCtx, u32 customSceneId);
 extern void SetSceneFlags(ActorContext* actorCtx, u32 customSceneId);

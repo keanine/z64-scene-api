@@ -4,7 +4,7 @@
 #include <string.h>
 #include "libc64/sprintf.h"
 
-#define DEBUG_UI_ENABLED
+// #define DEBUG_UI_ENABLED
 
 #if defined DEBUG_UI_ENABLED
 char *strcat(char *dest, const char *src);

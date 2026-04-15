@@ -51,7 +51,8 @@ RECOMP_HOOK_RETURN("Sram_OpenSave") void return_Sram_OpenSave() {
 RECOMP_HOOK("Sram_SaveEndOfCycle") void on_Sram_SaveEndOfCycle() {
     SaveMainFlagsToKV();
     DeleteOwlFlagsFromKV();
-    ClearCycleFlags();
+    // ClearCycleFlags();
+    ResetCycleToPersistent();
 }
 
 
@@ -155,8 +156,6 @@ void LoadOwlFlagsFromKV() {
         sprintf(key, "SceneAPI.owl.%s", SceneAPI_GetSceneNameById(i));
         if (KV_Slot_Has(key)) {
             KV_Slot_Get(key, &sceneAPI_sceneFlags[i], sizeof(SceneAPI_SceneFlags));
-            recomp_printf("Has Key: %s: cycleSwitch0 %d\n", key, sceneAPI_sceneFlags[i].cycleSwitch0);
-            recomp_printf("Has Key: permanentSwitch0 %d\n", key, sceneAPI_sceneFlags[i].permanentSwitch0);
         }
         else {
             sceneAPI_sceneFlags[i] = SCENE_FLAGS_EMPTY;
@@ -275,4 +274,14 @@ void DebugClearCurrentSceneFlags(PlayState* play) {
     play->actorCtx.sceneFlags.switches[1] = 0;
     play->actorCtx.sceneFlags.clearedRoom = 0;
     play->actorCtx.sceneFlags.collectible[0] = 0;
+}
+
+void ResetCycleToPersistent() {
+    u16 i;
+    for (i = 0; i < sceneAPI_customSceneIterator; i++) {
+        sceneAPI_sceneFlags[i].cycleChest &= sceneAPI_customScenes[i].persistentFlags.chest;
+        sceneAPI_sceneFlags[i].cycleSwitch0 &= sceneAPI_customScenes[i].persistentFlags.switch0;
+        sceneAPI_sceneFlags[i].cycleSwitch1 &= sceneAPI_customScenes[i].persistentFlags.switch1;
+        sceneAPI_sceneFlags[i].cycleCollectible &= sceneAPI_customScenes[i].persistentFlags.collectible;
+    }
 }

@@ -6,13 +6,30 @@
 #include "recomputils.h"
 #include "PR/gbi.h"
 
-typedef struct SceneAPI_SceneProperties {
-    u8 enableElegyOfEmptiness;
-    u8 enableSongOfSoaring;
-} SceneAPI_SceneProperties;
+typedef struct SceneAPI_ScenePermissions {
+    // Restriction Flags
+    bool allowButtonB;
+    bool allowTradeItems; // Includes deed trade quest, anju/kafei trade quest, bottles, and ocarina
+    bool allowSongOfTime;
+    bool allowSongOfDoubleTime;
+    bool allowInvertedSongOfTime;
+    bool allowSongOfSoaring;
+    bool allowSongOfStorms;
+    bool allowMasks;
+    bool allowPictoBox;
+    bool allowAll; // "another"; enables all item permissions
 
-#define SCENEAPI_DEFAULT_PROPERTIES (SceneAPI_SceneProperties){ false, false }
-#define SCENEAPI_PROPERTIES(elegy, soaring) (SceneAPI_SceneProperties){ elegy, soaring }
+    // Additional Flags
+    bool enableElegyOfEmptiness;
+} SceneAPI_ScenePermissions;
+
+typedef struct SceneAPI_ScenePersistentFlags {
+    u32 chest;
+    u32 switch0;
+    u32 switch1;
+    u32 collectible;
+} SceneAPI_ScenePersistentFlags;
+
 
 typedef struct SceneAPI_SceneId {
     u8 sceneType;
@@ -20,13 +37,21 @@ typedef struct SceneAPI_SceneId {
     char* sceneName;
 } SceneAPI_SceneId;
 
+
 #define SCENEAPI_MSCENE_ID(customSceneName) (SceneAPI_SceneId){ 1, 0, customSceneName }
 #define SCENEAPI_VSCENE_ID(scene) (SceneAPI_SceneId){ 0, scene, "" }
 
-RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[], SceneAPI_SceneProperties properties));
+
+RECOMP_IMPORT("z64_scene_api", void SceneAPI_SetPermissionsNone(SceneAPI_ScenePermissions* outPermissions));
+RECOMP_IMPORT("z64_scene_api", void SceneAPI_SetPermissionsAll(SceneAPI_ScenePermissions* outPermissions));
+RECOMP_IMPORT("z64_scene_api", void SceneAPI_SetPermissionsDefault(SceneAPI_ScenePermissions* outPermissions));
+RECOMP_IMPORT("z64_scene_api", void SceneAPI_SetPermissionsIndoors(SceneAPI_ScenePermissions* outPermissions));
+RECOMP_IMPORT("z64_scene_api", void SceneAPI_SetPermissionsMoon(SceneAPI_ScenePermissions* outPermissions));
+RECOMP_IMPORT("z64_scene_api", void SceneAPI_SetPermissionsNoDoubleTime(SceneAPI_ScenePermissions* outPermissions));
+
+RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[], SceneAPI_ScenePermissions permissions, SceneAPI_ScenePersistentFlags persistentFlags));
 RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterExitOverride(SceneAPI_SceneId fromScene, u16 exitIndex, SceneAPI_SceneId toScene, u16 entranceIndex));
 RECOMP_IMPORT("z64_scene_api", u16 SceneAPI_RegisterWarpGrotto(SceneAPI_SceneId fromScene, SceneAPI_SceneId toScene, u16 spawnIndex, f32 x, f32 y, f32 z));
-
 
 
 #define SCENE_HEADER(scenePrefix) scenePrefix##_scene_header00
