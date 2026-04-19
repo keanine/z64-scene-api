@@ -21,6 +21,7 @@ typedef struct SceneAPI_ScenePermissions {
 
     // Additional Flags
     bool enableElegyOfEmptiness;
+    bool allowFierceDeity
 } SceneAPI_ScenePermissions;
 
 typedef struct SceneAPI_ScenePersistentFlags {

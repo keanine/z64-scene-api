@@ -1,12 +1,17 @@
 #include "scene_api_grottos.h"
 #include <overlays/actors/ovl_Door_Ana/z_door_ana.h>
 
-#include "scene_api.h"
+SceneAPI_Grotto* sceneAPI_currentGrotto = NULL;
+
+struct SceneAPI_Grotto sceneAPI_warpGrottos[SCENEAPI_MAX_ARRAY];
+u32 sceneAPI_grottosCount = 0;
+
+u16 sceneAPI_savedGrottoEntrance = 0;
 
 // Spawn registered grottos
 RECOMP_HOOK("Cutscene_HandleEntranceTriggers") void on_PostInit(PlayState* play) {
-    for (u32 i = 0; i < sceneAPI_grottosIterator; i++) {
-        if (IsCurrentScene(play, sceneAPI_warpGrottos[i].fromScene)) {
+    for (u32 i = 0; i < sceneAPI_grottosCount; i++) {
+        if (SceneAPI_IsCurrentScene(play, sceneAPI_warpGrottos[i].fromScene)) {
             sceneAPI_warpGrottos[i].actor = Actor_Spawn(&play->actorCtx, play, ACTOR_DOOR_ANA, sceneAPI_warpGrottos[i].x, sceneAPI_warpGrottos[i].y, sceneAPI_warpGrottos[i].z, SPAWN_ROT_FLAGS(0, 0x0007), SPAWN_ROT_FLAGS(0X86,0x000D), SPAWN_ROT_FLAGS(0, 0x007F), 0x0300);
         }
     }
@@ -17,7 +22,7 @@ RECOMP_HOOK("DoorAna_WaitOpen") void on_DoorAna_WaitOpen(DoorAna* this, PlayStat
     sceneAPI_play = play;
     sceneAPI_currentGrotto = NULL;
 
-    for (u32 i = 0; i < sceneAPI_grottosIterator; i++) {
+    for (u32 i = 0; i < sceneAPI_grottosCount; i++) {
         if (sceneAPI_warpGrottos[i].actor == this) {
             sceneAPI_currentGrotto = &sceneAPI_warpGrottos[i];
             sceneAPI_savedGrottoEntrance = play->nextEntrance;
@@ -36,8 +41,8 @@ RECOMP_HOOK_RETURN("DoorAna_WaitOpen") void return_DoorAna_WaitOpen() {
         }
         else {            
             sceneAPI_play->nextEntrance = SCENEAPI_ENTRANCE(sceneAPI_currentGrotto->toScene.entrId, sceneAPI_currentGrotto->spawnIndex);
-            sceneAPI_nextCustomSceneId = SCENEAPI_VANILLA_ID;
-            sceneAPI_customSceneId = SCENEAPI_VANILLA_ID;
+            sceneAPI_nextCustomSceneId = SCENEAPI_INVALID;
+            sceneAPI_customSceneId = SCENEAPI_INVALID;
             recomp_printf("Grotto Destination (Vanilla): %d\n", sceneAPI_currentGrotto->toSceneId);
         }
     }

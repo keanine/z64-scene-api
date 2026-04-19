@@ -3,31 +3,22 @@
 #include <overlays/actors/ovl_Door_Ana/z_door_ana.h>
 #include <z64scene.h>
 
-struct SceneAPI_CustomScene sceneAPI_customScenes[500];
-struct SceneAPI_ExitOverride sceneAPI_exitOverrides[500];
-struct SceneAPI_Grotto sceneAPI_warpGrottos[500];
+struct SceneAPI_CustomScene sceneAPI_customScenes[SCENEAPI_MAX_ARRAY];
+u32 sceneAPI_customSceneCount = 0;
 
-u32 sceneAPI_customSceneIterator = 0;
-u32 sceneAPI_exitOverrideIterator = 0;
-u32 sceneAPI_grottosIterator = 0;
-
-u8 sceneAPI_isNextEntranceModified = false;
-u16 sceneAPI_savedGrottoEntrance = 0;
+bool sceneAPI_isNextEntranceModified = false;
 
 PlayState* sceneAPI_play = NULL;
-SceneAPI_Grotto* sceneAPI_currentGrotto = NULL;
-SceneAPI_ExitOverride* sceneAPI_currentExitOverride = NULL;
 
-u16 sceneAPI_customSceneId = SCENEAPI_VANILLA_ID;
-u16 sceneAPI_nextCustomSceneId = SCENEAPI_VANILLA_ID;
+u16 sceneAPI_customSceneId = SCENEAPI_INVALID;
+u16 sceneAPI_nextCustomSceneId = SCENEAPI_INVALID;
 
 u8 sceneAPI_modifiedElegyScene = false;
 
-u8 sceneAPI_expansionsEnabled = true;
-
-extern RestrictionFlags entryRestrictionFlag;
-extern SceneTableEntry entrySceneTableEntry;
-extern PersistentCycleSceneFlags entryPersistentCycleSceneFlags;
+#define DEFINE_SCENE(name, textId, drawConfig) \
+    { { SEGMENT_ROM_START(name), SEGMENT_ROM_END(name) }, textId, 0, drawConfig, 0, 0 }
+SceneTableEntry entrySceneTableEntry = DEFINE_SCENE(Z2_INSIDETOWER, 0x11F, SCENE_DRAW_CFG_MAT_ANIM);
+#undef DEFINE_SCENE
 
 
 static EntranceTableEntry sCustomEntrance0[] = { { SCENE_UNSET_01, 0, 0x0102 } };
@@ -69,25 +60,8 @@ void SceneAPI_RecompInit() {
     recomp_printf("== Scene API Initialized ==\n\n");
 }
 
-RestrictionFlags GetRestrictionsFromCustomScene(u16 customSceneId) {
-    SceneAPI_ScenePermissions permissions = sceneAPI_customScenes[customSceneId].permissions;
-
-    return (RestrictionFlags){ SCENEAPI_SCENE,
-        RESTRICTIONS_SET(
-            0,
-            permissions.allowButtonB ? 0 : 1,
-            0,
-            permissions.allowTradeItems ? 0 : 1,
-            permissions.allowSongOfTime ? 0 : 1,
-            permissions.allowSongOfDoubleTime ? 0 : 1,
-            permissions.allowInvertedSongOfTime ? 0 : 1,
-            permissions.allowSongOfSoaring ? 0 : 1,
-            permissions.allowSongOfStorms ? 0 : 1,
-            permissions.allowMasks ? 0 : 1,
-            permissions.allowPictoBox ? 0 : 1,
-            permissions.allowAll ? 0 : 1
-        )
-    };
+bool IsSceneCustom(u16 sceneId) {
+    
 }
 
 // Override the sceneSegment as well as setting the customSceneId
@@ -100,14 +74,14 @@ RECOMP_HOOK("Play_InitScene") void on_init_scene(PlayState* play, s32 spawn) {
     SceneEntranceTableEntry entry = sSceneEntranceTable[SCENEAPI_SCENE_ENTR];
 
     // Reset the customSceneId to default
-    sceneAPI_customSceneId = SCENEAPI_VANILLA_ID;
+    sceneAPI_customSceneId = SCENEAPI_INVALID;
 
-    if (sceneAPI_nextCustomSceneId != SCENEAPI_VANILLA_ID) {
+    if (sceneAPI_nextCustomSceneId != SCENEAPI_INVALID) {
         if (play->sceneId == SCENEAPI_SCENE) {
             sceneAPI_customSceneId = sceneAPI_nextCustomSceneId;
-            sceneAPI_nextCustomSceneId = SCENEAPI_VANILLA_ID;
+            sceneAPI_nextCustomSceneId = SCENEAPI_INVALID;
 
-            sRestrictionFlags[SCENEAPI_SCENE] = GetRestrictionsFromCustomScene(sceneAPI_customSceneId);
+            sRestrictionFlags[SCENEAPI_SCENE] = SceneAPI_GetRestrictionsFromCustomScene(sceneAPI_customSceneId);
 
             // No need to free the original memory since it's part of an arena and will get freed automatically when resetting between scenes.
             play->sceneSegment = sceneAPI_customScenes[sceneAPI_customSceneId].sceneSegment;
@@ -117,7 +91,7 @@ RECOMP_HOOK("Play_InitScene") void on_init_scene(PlayState* play, s32 spawn) {
 
 // Overrides the room list
 RECOMP_HOOK("Room_RequestNewRoom") void on_room_request(PlayState* play, RoomContext* roomCtx, s32 index) {
-    if (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID) {
+    if (sceneAPI_customSceneId != SCENEAPI_INVALID) {
         if (play->sceneId == SCENEAPI_SCENE && roomCtx->status == 0) {
             roomCtx->prevRoom = roomCtx->curRoom;
             roomCtx->curRoom.num = index;
@@ -135,7 +109,7 @@ RECOMP_HOOK("Room_RequestNewRoom") void on_room_request(PlayState* play, RoomCon
 
 // Increases the number of surface nodes
 RECOMP_HOOK("BgCheck_GetSpecialSceneMaxObjects") void set_col_memsize(PlayState* play, s32* maxNodes, s32* maxPolygons, s32* maxVertices) {
-    if (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID) {
+    if (sceneAPI_customSceneId != SCENEAPI_INVALID) {
         if (play->sceneId == SCENEAPI_SCENE) {
             play->colCtx.memSize = 0x23000 * 2; // increase this if you need more surface nodes
         }
@@ -147,7 +121,7 @@ RECOMP_HOOK("Message_DrawMain") void on_Message_DrawMain(PlayState* play, Gfx** 
     MessageContext* msgCtx = &play->msgCtx;
     sceneAPI_play = play;
 
-    if (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID && play->sceneId == SCENEAPI_SCENE) {
+    if (sceneAPI_customSceneId != SCENEAPI_INVALID && play->sceneId == SCENEAPI_SCENE) {
         if (msgCtx->msgLength != 0) {
             if (msgCtx->msgMode == MSGMODE_18) {
                 if (sceneAPI_customScenes[sceneAPI_customSceneId].permissions.allowElegyOfEmptiness) {
@@ -170,7 +144,7 @@ RECOMP_HOOK_RETURN("Message_DrawMain") void return_Message_DrawMain() {
 }
 
 u16 SceneAPI_GetSceneIdByName(char* name) {
-    for (u16 i = 0; i < sceneAPI_customSceneIterator; i++) {
+    for (u16 i = 0; i < sceneAPI_customSceneCount; i++) {
         if (strcmp(sceneAPI_customScenes[i].sceneName, name) == 0) {
             return i;
         }
@@ -182,7 +156,7 @@ char* SceneAPI_GetSceneNameById(u32 sceneId) {
     return sceneAPI_customScenes[sceneId].sceneName;
 }
 
-u8 IsCurrentScene(PlayState* play, SceneAPI_SceneId scene) {
+bool SceneAPI_IsCurrentScene(PlayState* play, SceneAPI_SceneId scene) {
     switch (scene.sceneType) {
         case SCENEAPI_SCENETYPE_VANILLA:
             return (play->sceneId == sceneAPI_entranceId_to_sceneId[scene.entrId]);
@@ -190,4 +164,29 @@ u8 IsCurrentScene(PlayState* play, SceneAPI_SceneId scene) {
             return (play->sceneId == SCENEAPI_SCENE && sceneAPI_customSceneId == SceneAPI_GetSceneIdByName(scene.sceneName));
     }
     return false;
+}
+
+bool SceneAPI_IsCustomScene(PlayState* play) {
+    return play->sceneId == SCENEAPI_SCENE;
+}
+
+RestrictionFlags SceneAPI_GetRestrictionsFromCustomScene(u16 customSceneId) {
+    SceneAPI_ScenePermissions permissions = sceneAPI_customScenes[customSceneId].permissions;
+
+    return (RestrictionFlags){ SCENEAPI_SCENE,
+        RESTRICTIONS_SET(
+            0,
+            permissions.allowButtonB ? 0 : 1,
+            0,
+            permissions.allowTradeItems ? 0 : 1,
+            permissions.allowSongOfTime ? 0 : 1,
+            permissions.allowSongOfDoubleTime ? 0 : 1,
+            permissions.allowInvertedSongOfTime ? 0 : 1,
+            permissions.allowSongOfSoaring ? 0 : 1,
+            permissions.allowSongOfStorms ? 0 : 1,
+            permissions.allowMasks ? 0 : 1,
+            permissions.allowPictoBox ? 0 : 1,
+            permissions.allowAll ? 0 : 1
+        )
+    };
 }

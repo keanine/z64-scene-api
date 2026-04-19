@@ -17,7 +17,9 @@ typedef struct SceneAPI_SceneId {
 
 typedef struct SceneAPI_ScenePermissions {
     // Restriction Flags
+    // bool enableHeartGauge; // Not implemented
     bool allowButtonB;
+    // bool enableButtonA; // Not implemented
     bool allowTradeItems;
     bool allowSongOfTime;
     bool allowSongOfDoubleTime;
@@ -28,12 +30,9 @@ typedef struct SceneAPI_ScenePermissions {
     bool allowPictoBox;
     bool allowAll;
 
-    // Restriction Flags not implemented in MM
-        // bool enableHeartGauge;
-        // bool enableButtonA;
-
     // Additional Flags
     bool allowElegyOfEmptiness;
+    bool allowFierceDeity;
 } SceneAPI_ScenePermissions;
 
 typedef struct SceneAPI_ScenePersistentFlags {
@@ -90,6 +89,23 @@ typedef struct PersistentCycleSceneFlags {
     /* 0x8 */ u32 chest;
     /* 0xC */ u32 collectible;
 } PersistentCycleSceneFlags; // size = 0x10
+
+
+typedef struct SceneAPI_SceneFlags {
+    u32 cycleChest;
+    u32 cycleSwitch0;
+    u32 cycleSwitch1;
+    u32 cycleCollectible;
+    u32 cycleClearedRoom;
+    
+    u32 permanentChest;
+    u32 permanentSwitch0;
+    u32 permanentSwitch1;
+    u32 permanentCollectible;
+    u32 permanentClearedRoom;
+    u32 permanentUnk14;
+    u32 permanentRooms;
+} SceneAPI_SceneFlags;
 
 
 extern EntranceSceneId sceneAPI_sceneId_to_entranceId[];

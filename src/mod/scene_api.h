@@ -11,52 +11,8 @@
 
 #include <z64scene.h>
 
-extern char* SceneAPI_GetSceneNameById(u32 sceneId);
-extern u16 SceneAPI_GetSceneIdByName(char* name);
-extern u8 IsCurrentScene(PlayState* play, SceneAPI_SceneId scene);
+// From Decomp
 
-extern void InitSceneVariables();
-extern RestrictionFlags GetRestrictionsFromCustomScene(u16 customSceneId);
-
-#define SCENEAPI_SCENE SCENE_UNSET_01
-#define SCENEAPI_SCENE_ENTR ENTR_SCENE_UNSET_08
-
-#define SCENEAPI_VANILLA_ID 65535
-
-#define SCENEAPI_ENTRANCE(scene, spawn) ((((scene) & 0x7F) << 9) | (((spawn) & 0x1F) << 4))
-
-extern struct SceneAPI_CustomScene sceneAPI_customScenes[500];
-extern struct SceneAPI_ExitOverride sceneAPI_exitOverrides[500];
-extern struct SceneAPI_Grotto sceneAPI_warpGrottos[500];
-
-extern u8 sceneAPI_isNextEntranceModified;
-extern u16 sceneAPI_savedGrottoEntrance;
-
-extern PlayState* sceneAPI_play;
-extern SceneAPI_Grotto* sceneAPI_currentGrotto;
-extern SceneAPI_ExitOverride* sceneAPI_currentExitOverride;
-
-extern u32 sceneAPI_customSceneIterator;
-extern u32 sceneAPI_exitOverrideIterator;
-extern u32 sceneAPI_grottosIterator;
-
-extern u16 sceneAPI_customSceneId;
-extern u16 sceneAPI_nextCustomSceneId;
-
-extern u8 sceneAPI_expansionsEnabled;
-
-RECOMP_DECLARE_EVENT(SceneAPI_Init());
-RECOMP_DECLARE_EVENT(SceneAPI_PostInit());
-
-extern u8 D_808141F0[];
-
-extern RestrictionFlags sRestrictionFlags[];
-extern SceneTableEntry gSceneTable[SCENE_MAX];
-extern PersistentCycleSceneFlags sPersistentCycleSceneFlags[SCENE_MAX];
-
-#define SCENEAPI_DEFINE_ENTRANCE(entranceTable) \
-    { ARRAY_COUNT(entranceTable), entranceTable, NULL }
-    
 #define RESTRICTIONS_SET(hGauge, bButton, aButton, tradeItems, songOfTime, songOfDoubleTime, invSongOfTime, \
                          songOfSoaring, songOfStorms, masks, pictoBox, all)                                 \
     ((((hGauge)&3) << 6) | (((bButton)&3) << 4) | (((aButton)&3) << 2) | (((tradeItems)&3) << 0)),          \
@@ -64,10 +20,55 @@ extern PersistentCycleSceneFlags sPersistentCycleSceneFlags[SCENE_MAX];
          (((songOfSoaring)&3) << 0)),                                                                       \
         ((((songOfStorms)&3) << 6) | (((masks)&3) << 4) | (((pictoBox)&3) << 2) | (((all)&3) << 0))
 
-// Common patterns
-#define RESTRICTIONS_NONE RESTRICTIONS_SET(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-#define RESTRICTIONS_INDOORS RESTRICTIONS_SET(0, 1, 0, 0, 0, 3, 0, 0, 3, 0, 0, 1)
-#define RESTRICTIONS_MOON RESTRICTIONS_SET(0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0)
-#define RESTRICTIONS_NO_DOUBLE_TIME RESTRICTIONS_SET(0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0)
+extern u8 _Z2_INSIDETOWERSegmentRomStart[1];
+extern u8 _Z2_INSIDETOWERSegmentRomEnd[1];
+
+extern RestrictionFlags sRestrictionFlags[];
+extern SceneTableEntry gSceneTable[SCENE_MAX];
+
+extern u8 D_808141F0[];
+
+extern SceneTableEntry entrySceneTableEntry;
+
+
+// API
+
+#define SCENEAPI_DEFINE_ENTRANCE(entranceTable) \
+    { ARRAY_COUNT(entranceTable), entranceTable, NULL }
+
+#define SCENEAPI_ENTRANCE(scene, spawn) ((((scene) & 0x7F) << 9) | (((spawn) & 0x1F) << 4))
+
+#define SCENEAPI_SCENE SCENE_UNSET_01
+#define SCENEAPI_SCENE_ENTR ENTR_SCENE_UNSET_08
+
+#define SCENEAPI_INVALID 65535
+
+#define SCENEAPI_MAX_ARRAY 500
+
+extern char* SceneAPI_GetSceneNameById(u32 sceneId);
+extern u16 SceneAPI_GetSceneIdByName(char* name);
+extern bool SceneAPI_IsCurrentScene(PlayState* play, SceneAPI_SceneId scene);
+extern bool SceneAPI_IsCustomScene(PlayState* play);
+
+extern void SceneAPI_UnequipRestrictedItems();
+extern RestrictionFlags SceneAPI_GetRestrictionsFromCustomScene(u16 customSceneId);
+
+RECOMP_DECLARE_EVENT(SceneAPI_Init());
+RECOMP_DECLARE_EVENT(SceneAPI_PostInit());
+
+extern struct SceneAPI_CustomScene sceneAPI_customScenes[SCENEAPI_MAX_ARRAY];
+extern u32 sceneAPI_customSceneCount;
+
+extern PlayState* sceneAPI_play;
+
+extern RestrictionFlags entryRestrictionFlag;
+extern SceneTableEntry entrySceneTableEntry;
+extern PersistentCycleSceneFlags entryPersistentCycleSceneFlags;
+
+extern u16 sceneAPI_customSceneId;
+extern u16 sceneAPI_nextCustomSceneId;
+extern bool sceneAPI_isNextEntranceModified;
+
+extern u8 sceneAPI_modifiedElegyScene;
 
 #endif /* SCENE_API_H */

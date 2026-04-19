@@ -115,7 +115,7 @@ RECOMP_HOOK("Player_UpdateCommon") void on_Player_UpdateCommonUI(Player* this, P
     printDelay++;
 
     if (CHECK_BTN_ANY(input->press.button, BTN_L)) {
-        if (sceneAPI_customSceneId != SCENEAPI_VANILLA_ID) {
+        if (sceneAPI_customSceneId != SCENEAPI_INVALID) {
             recomp_printf("L PRESSED: Flags cleared in custom scene (%s).\n", sceneAPI_customScenes[sceneAPI_customSceneId].sceneName);
             DebugClearCurrentSceneFlags(play);
         }
