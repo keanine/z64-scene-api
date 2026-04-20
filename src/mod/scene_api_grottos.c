@@ -9,13 +9,15 @@ u32 sceneAPI_grottosCount = 0;
 u16 sceneAPI_savedGrottoEntrance = 0;
 
 // Spawn registered grottos
-RECOMP_HOOK("Cutscene_HandleEntranceTriggers") void on_PostInit(PlayState* play) {
-    for (u32 i = 0; i < sceneAPI_grottosCount; i++) {
-        if (SceneAPI_IsCurrentScene(play, sceneAPI_warpGrottos[i].fromScene)) {
-            sceneAPI_warpGrottos[i].actor = Actor_Spawn(&play->actorCtx, play, ACTOR_DOOR_ANA, sceneAPI_warpGrottos[i].x, sceneAPI_warpGrottos[i].y, sceneAPI_warpGrottos[i].z, SPAWN_ROT_FLAGS(0, 0x0007), SPAWN_ROT_FLAGS(0X86,0x000D), SPAWN_ROT_FLAGS(0, 0x007F), 0x0300);
-        }
-        else {
-            sceneAPI_warpGrottos[i].actor = NULL;
+RECOMP_HOOK("Room_ProcessRoomRequest") s32 Room_ProcessRoomRequest(PlayState* play, RoomContext* roomCtx) {
+    if (roomCtx->status == 1) {
+        for (u32 i = 0; i < sceneAPI_grottosCount; i++) {
+            if (SceneAPI_IsCurrentScene(play, sceneAPI_warpGrottos[i].fromScene)) {
+                sceneAPI_warpGrottos[i].actor = Actor_Spawn(&play->actorCtx, play, ACTOR_DOOR_ANA, sceneAPI_warpGrottos[i].x, sceneAPI_warpGrottos[i].y, sceneAPI_warpGrottos[i].z, SPAWN_ROT_FLAGS(0, 0x0007), SPAWN_ROT_FLAGS(0X86,0x000D), SPAWN_ROT_FLAGS(0, 0x007F), 0x0300);
+            }
+            else {
+                sceneAPI_warpGrottos[i].actor = NULL;
+            }
         }
     }
 }
