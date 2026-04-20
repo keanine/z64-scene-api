@@ -20,7 +20,7 @@ typedef struct SceneAPI_ScenePermissions {
     bool allowAll; // "another"; enables all item permissions
 
     // Additional Flags
-    bool enableElegyOfEmptiness;
+    bool allowElegyOfEmptiness;
     bool allowFierceDeity
 } SceneAPI_ScenePermissions;
 

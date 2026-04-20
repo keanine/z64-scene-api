@@ -24,9 +24,25 @@ u16 SceneAPI_RegisterExitOverride(SceneAPI_SceneId fromScene, u16 exitIndex, Sce
     SceneId fromId = SCENEAPI_SCENE;
     SceneId toId = SCENEAPI_SCENE;
 
-    // Entrance_GetSceneIdAbsolute(fromScene.entrId)
-    if (fromScene.sceneType == SCENEAPI_SCENETYPE_VANILLA) fromId = sceneAPI_entranceId_to_sceneId[fromScene.entrId];
-    if (toScene.sceneType == SCENEAPI_SCENETYPE_VANILLA) toId = sceneAPI_entranceId_to_sceneId[toScene.entrId];
+    // Entrance_GetSceneIdAbsolute(fromScene.entrId) should work here. RecompInit is probably too early.
+
+    switch (fromScene.sceneType) {
+        case SCENEAPI_SCENETYPE_VANILLA:
+            fromId = sceneAPI_entranceId_to_sceneId[fromScene.entrId];
+            break;
+        case SCENEAPI_SCENETYPE_MODDED:
+            fromScene.entrId = SCENEAPI_SCENE_ENTR;
+            break;
+    }
+
+    switch (toScene.sceneType) {
+        case SCENEAPI_SCENETYPE_VANILLA:
+            toId = sceneAPI_entranceId_to_sceneId[toScene.entrId];
+            break;
+        case SCENEAPI_SCENETYPE_MODDED:
+            toScene.entrId = SCENEAPI_SCENE_ENTR;
+            break;
+    }
 
     sceneAPI_exitOverrides[sceneAPI_exitOverrideCount++] = (SceneAPI_ExitOverride){ fromScene, toScene, fromId, toId, exitIndex, entranceIndex };
     return slot;

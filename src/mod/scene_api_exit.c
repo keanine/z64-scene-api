@@ -32,6 +32,7 @@ RECOMP_HOOK("func_808354A4") void on_Exit(PlayState* play, s32 exitIndex, s32 ar
 // Apply the new exit if an override was found
 RECOMP_HOOK_RETURN("func_808354A4") void return_Exit() {
     if (sceneAPI_isNextEntranceModified) {
+        recomp_printf("toscene entrId: %d", sceneAPI_currentExitOverride->toScene.entrId);
         sceneAPI_play->nextEntrance = SCENEAPI_ENTRANCE(sceneAPI_currentExitOverride->toScene.entrId, sceneAPI_currentExitOverride->exitIndex);
         sceneAPI_isNextEntranceModified = false;
     }

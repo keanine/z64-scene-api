@@ -14,6 +14,9 @@ RECOMP_HOOK("Cutscene_HandleEntranceTriggers") void on_PostInit(PlayState* play)
         if (SceneAPI_IsCurrentScene(play, sceneAPI_warpGrottos[i].fromScene)) {
             sceneAPI_warpGrottos[i].actor = Actor_Spawn(&play->actorCtx, play, ACTOR_DOOR_ANA, sceneAPI_warpGrottos[i].x, sceneAPI_warpGrottos[i].y, sceneAPI_warpGrottos[i].z, SPAWN_ROT_FLAGS(0, 0x0007), SPAWN_ROT_FLAGS(0X86,0x000D), SPAWN_ROT_FLAGS(0, 0x007F), 0x0300);
         }
+        else {
+            sceneAPI_warpGrottos[i].actor = NULL;
+        }
     }
 }
 
@@ -22,13 +25,26 @@ RECOMP_HOOK("DoorAna_WaitOpen") void on_DoorAna_WaitOpen(DoorAna* this, PlayStat
     sceneAPI_play = play;
     sceneAPI_currentGrotto = NULL;
 
-    for (u32 i = 0; i < sceneAPI_grottosCount; i++) {
-        if (sceneAPI_warpGrottos[i].actor == this) {
-            sceneAPI_currentGrotto = &sceneAPI_warpGrottos[i];
-            sceneAPI_savedGrottoEntrance = play->nextEntrance;
-            break;
+    Player* player = GET_PLAYER(play);
+    s32 grottoType = DOORANA_GET_TYPE(&this->actor);
+
+    if (Math_StepToF(&this->actor.scale.x, 0.01f, 0.001f)) {
+        if ((this->actor.attentionRangeType != ATTENTION_RANGE_0) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
+            (play->transitionMode == TRANS_MODE_OFF) && (player->stateFlags1 & PLAYER_STATE1_80000000) &&
+            (player->av1.actionVar1 == 0)) {
+
+            if (grottoType == DOORANA_TYPE_VISIBLE_SCENE_EXIT) {
+                for (u32 i = 0; i < sceneAPI_grottosCount; i++) {
+                    if (sceneAPI_warpGrottos[i].actor == &this->actor) {
+                        sceneAPI_currentGrotto = &sceneAPI_warpGrottos[i];
+                        sceneAPI_savedGrottoEntrance = play->nextEntrance;
+                        break;
+                    }
+                }
+            }
         }
     }
+
 }
 
 // Override the exit location of the current grotto if it is registered as a scene API grotto

@@ -182,7 +182,7 @@ RECOMP_HOOK_RETURN("Sram_OpenSave") void return_Sram_OpenSave() {
         } else {
             LoadMainFlagsFromKV();
         }
-        PermanentToCycle();
+        StorePermanentFlagsAsCycleFlags();
     }
 }
 
@@ -199,7 +199,7 @@ RECOMP_HOOK("Sram_SaveEndOfCycle") void on_Sram_SaveEndOfCycle() {
 RECOMP_HOOK("Sram_SaveSpecialEnterClockTown") void on_Sram_SaveSpecialEnterClockTown() {
     SaveMainFlagsToKV();
     DeleteOwlFlagsFromKV();
-    CycleToPermanent();
+    StoreCycleAsPermanentFlags();
 }
 
 // Owl Save
@@ -226,19 +226,19 @@ RECOMP_HOOK("Actor_InitPlayerImpact") void on_Actor_InitPlayerImpact(PlayState* 
 
 // Starting a new day
 RECOMP_HOOK("Interface_NewDay") void on_Interface_NewDay(PlayState* play, s32 day) {
-    CycleToPermanent();
+    StoreCycleAsPermanentFlags();
 }
 
 
 // Restarting after a moon crash
 RECOMP_HOOK_RETURN("Sram_ResetSaveFromMoonCrash") void return_Sram_ResetSaveFromMoonCrash() {
-    PermanentToCycle();
+    StorePermanentFlagsAsCycleFlags();
 }
 
 
 // Store cycleSceneFlags into permanentSceneFlags?
 RECOMP_HOOK_RETURN("func_8014546C") void return_func_8014546C() {
-    CycleToPermanent();
+    StoreCycleAsPermanentFlags();
 }
 
 
@@ -250,7 +250,7 @@ RECOMP_CALLBACK("*", recomp_on_autosave) void BeforeAutosave(PlayState* play) {
 
     if (sceneAPI_customSceneId != SCENEAPI_INVALID) {
         UpdateSceneFlagsFromActorAndSaveContext(&play->actorCtx, sceneAPI_customSceneId);
-        CycleToPermanent();
+        StoreCycleAsPermanentFlags();
     }
 
     SaveOwlFlagsToKV();

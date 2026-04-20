@@ -49,10 +49,10 @@ void SceneAPI_RecompInit() {
     recomp_printf("\n== Initializing Scene API ==\n");
     
     // Register custom scenes
-    SceneAPI_Init();
+    SceneAPI_RegisterScenes();
     
     // Register warp grottos and exit overrides
-    SceneAPI_PostInit();
+    SceneAPI_RegisterGrottosAndExits();
     
     // Set the custom scenes table entry
     gSceneTable[SCENEAPI_SCENE] = entrySceneTableEntry;

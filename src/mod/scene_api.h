@@ -53,8 +53,8 @@ extern bool SceneAPI_IsCustomScene(PlayState* play);
 extern void SceneAPI_UnequipRestrictedItems();
 extern RestrictionFlags SceneAPI_GetRestrictionsFromCustomScene(u16 customSceneId);
 
-RECOMP_DECLARE_EVENT(SceneAPI_Init());
-RECOMP_DECLARE_EVENT(SceneAPI_PostInit());
+RECOMP_DECLARE_EVENT(SceneAPI_RegisterScenes());
+RECOMP_DECLARE_EVENT(SceneAPI_RegisterGrottosAndExits());
 
 extern struct SceneAPI_CustomScene sceneAPI_customScenes[SCENEAPI_MAX_ARRAY];
 extern u32 sceneAPI_customSceneCount;
