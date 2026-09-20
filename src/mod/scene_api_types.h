@@ -28,7 +28,7 @@ typedef struct SceneAPI_ScenePermissions {
     bool allowSongOfStorms;
     bool allowMasks;
     bool allowPictoBox;
-    bool allowAll;
+    bool allowAllItems;
 
     // Additional Flags
     bool allowElegyOfEmptiness;
@@ -42,13 +42,37 @@ typedef struct SceneAPI_ScenePersistentFlags {
     u32 collectible;
 } SceneAPI_ScenePersistentFlags;
 
+typedef struct SceneAPI_DungeonData {
+    bool isDungeon;
+    bool isBossRoom;
+} SceneAPI_DungeonData;
+
+typedef struct SceneAPI_MinimapRoom {
+    u16 isValid;
+    s16 floor;
+    TexturePtr texture;
+    s32 texWidth;
+    s32 texHeight;
+} SceneAPI_MinimapRoom;
+
+typedef struct SceneAPI_Minimap {
+    SceneAPI_MinimapRoom rooms[ROOM_MAX];
+    Color_RGBA8 color;
+    s32 drawType;
+    s16 scale;
+} SceneAPI_Minimap;
+
+// Minimap should either be MapDisp or contain it.
 
 typedef struct SceneAPI_CustomScene {
     char* sceneName;
     SceneCmd* sceneSegment;
     SceneCmd** roomList;
+    
+    SceneAPI_DungeonData dungeonData;
     SceneAPI_ScenePermissions permissions;
     SceneAPI_ScenePersistentFlags persistentFlags;
+    SceneAPI_Minimap minimap;
 } SceneAPI_CustomScene;
 
 
@@ -110,5 +134,13 @@ typedef struct SceneAPI_SceneFlags {
 
 extern EntranceSceneId sceneAPI_sceneId_to_entranceId[];
 extern SceneId sceneAPI_entranceId_to_sceneId[];
+
+#define MAP_COLOR_WHITE (Color_RGBA8){ 255, 255, 255, 255 }
+#define MAP_COLOR_CYAN (Color_RGBA8){ 0, 255, 255, 160 }
+#define MAP_COLOR_DARK_CYAN (Color_RGBA8){ 100, 255, 255, 255 }
+
+#define SCENEAPI_MINIMAP_EMPTY_ROOM (SceneAPI_MinimapRoom){ false, -1, NULL, -1, -1 }
+#define SCENEAPI_MINIMAP_EMPTY_ROOMS { SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM, SCENEAPI_MINIMAP_EMPTY_ROOM }
+#define SCENEAPI_EMPTY_MINIMAP (SceneAPI_Minimap){ SCENEAPI_MINIMAP_EMPTY_ROOMS, MAP_COLOR_DARK_CYAN, 0, 20 }
 
 #endif /* SCENE_API_TYPES_H */

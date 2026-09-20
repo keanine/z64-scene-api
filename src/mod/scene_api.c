@@ -2,6 +2,10 @@
 #include "ProxyMM_ObjDepLoader.h"
 #include <overlays/actors/ovl_Door_Ana/z_door_ana.h>
 #include <z64scene.h>
+#include "scene_api_map.h"
+#include "scene_api_minimap.h"
+
+// #include "gbi"
 
 struct SceneAPI_CustomScene sceneAPI_customScenes[SCENEAPI_MAX_ARRAY];
 u32 sceneAPI_customSceneCount = 0;
@@ -60,14 +64,13 @@ void SceneAPI_RecompInit() {
     recomp_printf("== Scene API Initialized ==\n\n");
 }
 
-bool IsSceneCustom(u16 sceneId) {
-    
+RECOMP_HOOK("Play_Init") void on_Play_Init(GameState* thisx) {
+    sceneAPI_play = (PlayState*)thisx;
 }
 
 // Override the sceneSegment as well as setting the customSceneId
-RECOMP_HOOK("Play_InitScene") void on_init_scene(PlayState* play, s32 spawn) {
-    recomp_printf("Spawning into scene %d (spawn %d)\n", play->sceneId, spawn);
-    sceneAPI_play = play;
+RECOMP_HOOK("Play_InitScene") void on_Play_InitScene(PlayState* play, s32 spawn) {
+    // recomp_printf("Spawning into scene %d (spawn %d)\n", play->sceneId, spawn);
 
     // Set the custom scenes entrance table // THIS SHOULD HAPPEN ONCE, AFTER RECOMP_INIT
     sSceneEntranceTable[SCENEAPI_SCENE_ENTR] = (SceneEntranceTableEntry)SCENEAPI_DEFINE_ENTRANCE(sCustomEntranceTable);
@@ -119,7 +122,6 @@ RECOMP_HOOK("BgCheck_GetSpecialSceneMaxObjects") void set_col_memsize(PlayState*
 // If the elegy of emptiness is played, check if the custom scene allows it
 RECOMP_HOOK("Message_DrawMain") void on_Message_DrawMain(PlayState* play, Gfx** gfxP) {
     MessageContext* msgCtx = &play->msgCtx;
-    sceneAPI_play = play;
 
     if (sceneAPI_customSceneId != SCENEAPI_INVALID && play->sceneId == SCENEAPI_SCENE) {
         if (msgCtx->msgLength != 0) {
@@ -166,8 +168,12 @@ bool SceneAPI_IsCurrentScene(PlayState* play, SceneAPI_SceneId scene) {
     return false;
 }
 
-bool SceneAPI_IsCustomScene(PlayState* play) {
-    return play->sceneId == SCENEAPI_SCENE;
+bool SceneAPI_IsCustomScene() {
+    return sceneAPI_play->sceneId == SCENEAPI_SCENE;
+}
+
+SceneAPI_CustomScene* GetCustomScene(u16 customSceneId) {
+    return &sceneAPI_customScenes[customSceneId];
 }
 
 RestrictionFlags SceneAPI_GetRestrictionsFromCustomScene(u16 customSceneId) {
@@ -186,7 +192,7 @@ RestrictionFlags SceneAPI_GetRestrictionsFromCustomScene(u16 customSceneId) {
             permissions.allowSongOfStorms ? 0 : 1,
             permissions.allowMasks ? 0 : 1,
             permissions.allowPictoBox ? 0 : 1,
-            permissions.allowAll ? 0 : 1
+            permissions.allowAllItems ? 0 : 1
         )
     };
 }

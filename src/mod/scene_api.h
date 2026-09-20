@@ -31,8 +31,6 @@ extern u8 D_808141F0[];
 extern SceneTableEntry entrySceneTableEntry;
 
 
-// API
-
 #define SCENEAPI_DEFINE_ENTRANCE(entranceTable) \
     { ARRAY_COUNT(entranceTable), entranceTable, NULL }
 
@@ -46,9 +44,10 @@ extern SceneTableEntry entrySceneTableEntry;
 #define SCENEAPI_MAX_ARRAY 500
 
 extern char* SceneAPI_GetSceneNameById(u32 sceneId);
-extern u16 SceneAPI_GetSceneIdByName(char* name);
-extern bool SceneAPI_IsCurrentScene(PlayState* play, SceneAPI_SceneId scene);
-extern bool SceneAPI_IsCustomScene(PlayState* play);
+RECOMP_EXPORT extern u16 SceneAPI_GetSceneIdByName(char* name);
+RECOMP_EXPORT extern bool SceneAPI_IsCurrentScene(PlayState* play, SceneAPI_SceneId scene);
+RECOMP_EXPORT extern bool SceneAPI_IsCustomScene();
+extern SceneAPI_CustomScene* GetCustomScene(u16 customSceneId);
 
 extern void SceneAPI_UnequipRestrictedItems();
 extern RestrictionFlags SceneAPI_GetRestrictionsFromCustomScene(u16 customSceneId);

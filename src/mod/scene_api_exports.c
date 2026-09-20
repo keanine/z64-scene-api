@@ -1,21 +1,17 @@
 #include "scene_api_exports.h"
 
-u16 SceneAPI_RegisterScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[], 
-    SceneAPI_ScenePermissions permissions, SceneAPI_ScenePersistentFlags persistentFlags) {
+u16 SceneAPI_RegisterScene(char* sceneName, SceneCmd* header, SceneCmd* rooms[]) {
     u16 slot = sceneAPI_customSceneCount;
-    sceneAPI_customScenes[sceneAPI_customSceneCount++] = (struct SceneAPI_CustomScene){ sceneName, header, rooms, permissions, persistentFlags };
-    recomp_printf("Scene %s Initialized in Slot %x\n", sceneName, slot);
-    return slot;
-}
 
-u16 SceneAPI_RegisterSceneBasic(char* sceneName, SceneCmd* header, SceneCmd* rooms[]) {
     SceneAPI_ScenePermissions permissions;
     SceneAPI_ScenePersistentFlags persistentFlags;
-
-    SceneAPI_SetPermissionsNone(&permissions);
+    permissions = CREATE_PERMISSIONS(false, false, false, false, false, false, false, false, false, false, false, false);
     persistentFlags = (SceneAPI_ScenePersistentFlags){ 0, 0, 0, 0 };
 
-    SceneAPI_RegisterScene(sceneName, header, rooms, permissions, persistentFlags);
+    sceneAPI_customScenes[slot] = (struct SceneAPI_CustomScene){ sceneName, header, rooms, (SceneAPI_DungeonData){ false, false }, permissions, persistentFlags, SCENEAPI_EMPTY_MINIMAP };
+    sceneAPI_customSceneCount++;
+    recomp_printf("Scene %s Initialized in Slot %x\n", sceneName, slot);
+    return slot;
 }
 
 u16 SceneAPI_RegisterExitOverride(SceneAPI_SceneId fromScene, u16 exitIndex, SceneAPI_SceneId toScene, u16 entranceIndex) {
@@ -62,30 +58,121 @@ u16 SceneAPI_RegisterWarpGrotto(SceneAPI_SceneId fromScene, SceneAPI_SceneId toS
 }
 
 
-void SceneAPI_SetPermissionsNone(SceneAPI_ScenePermissions* outPermissions) {
-    *outPermissions = CREATE_PERMISSIONS(false, false, false, false, false, false, false, false, false, false, false, false);
+void SceneAPI_SetPermissionsPreset_None(u16 slot) {
+    SceneAPI_ScenePermissions* permissions = &sceneAPI_customScenes[slot].permissions;
+    *permissions = CREATE_PERMISSIONS(false, false, false, false, false, false, false, false, false, false, false, false);
 }
 
-void SceneAPI_SetPermissionsAll(SceneAPI_ScenePermissions* outPermissions) {
-    *outPermissions = CREATE_PERMISSIONS(true, true, true, true, true, true, true, true, true, true, true, true );
+void SceneAPI_SetPermissionsPreset_All(u16 slot) {
+    SceneAPI_ScenePermissions* permissions = &sceneAPI_customScenes[slot].permissions;
+    *permissions = CREATE_PERMISSIONS(true, true, true, true, true, true, true, true, true, true, true, true );
 }
 
-void SceneAPI_SetPermissionsDefault(SceneAPI_ScenePermissions* outPermissions) {
-    *outPermissions = CREATE_PERMISSIONS(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, false);
+void SceneAPI_SetPermissionsPreset_Default(u16 slot) {
+    SceneAPI_ScenePermissions* permissions = &sceneAPI_customScenes[slot].permissions;
+    *permissions = CREATE_PERMISSIONS(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, false, false);
 }
 
-void SceneAPI_SetPermissionsIndoors(SceneAPI_ScenePermissions* outPermissions) {
-    *outPermissions = CREATE_PERMISSIONS(0, 1, 1, 0, 1, 1, 0, 1, 1, 0, false, false);
+void SceneAPI_SetPermissionsPreset_Indoors(u16 slot) {
+    SceneAPI_ScenePermissions* permissions = &sceneAPI_customScenes[slot].permissions;
+    *permissions = CREATE_PERMISSIONS(0, 1, 1, 0, 1, 1, 0, 1, 1, 0, false, false);
 }
 
-void SceneAPI_SetPermissionsMoon(SceneAPI_ScenePermissions* outPermissions) {
-    *outPermissions = CREATE_PERMISSIONS(1, 1, 1, 0, 0, 0, 1, 1, 1, 1, false, false);
+void SceneAPI_SetPermissionsPreset_Moon(u16 slot) {
+    SceneAPI_ScenePermissions* permissions = &sceneAPI_customScenes[slot].permissions;
+    *permissions = CREATE_PERMISSIONS(1, 1, 1, 0, 0, 0, 1, 1, 1, 1, false, false);
 }
 
-void SceneAPI_SetPermissionsNoDoubleTime(SceneAPI_ScenePermissions* outPermissions) {
-    *outPermissions = CREATE_PERMISSIONS(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false);
+void SceneAPI_SetPermissionsPreset_NoDoubleTime(u16 slot) {
+    SceneAPI_ScenePermissions* permissions = &sceneAPI_customScenes[slot].permissions;
+    *permissions = CREATE_PERMISSIONS(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false);
 }
 
-SceneAPI_ScenePermissions* SceneAPI_GetScenePermissions(u16 customSceneId) {
-    return &sceneAPI_customScenes[customSceneId].permissions;
+void SceneAPI_ApplyDungeonData(u16 slot, bool isDungeon, bool isBossRoom) {
+    SceneAPI_DungeonData* dungeonData = &sceneAPI_customScenes[slot].dungeonData;
+    dungeonData->isDungeon = isDungeon;
+    dungeonData->isBossRoom = isBossRoom;
+}
+
+void SceneAPI_ApplyPermissions(u16 slot, bool allowButtonB, bool allowTradeItems, bool allowSongOfTime, bool allowSongOfDoubleTime, bool allowInvertedSongOfTime, bool allowSongOfSoaring, bool allowSongOfStorms, bool allowMasks, bool allowPictoBox, bool allowAllItems, bool allowElegyOfEmptiness, bool allowFierceDeity) {
+    SceneAPI_ScenePermissions* permissions = &sceneAPI_customScenes[slot].permissions;
+    permissions->allowButtonB = allowButtonB;
+    permissions->allowTradeItems = allowTradeItems;
+    permissions->allowSongOfTime = allowSongOfTime;
+    permissions->allowSongOfDoubleTime = allowSongOfDoubleTime;
+    permissions->allowInvertedSongOfTime = allowInvertedSongOfTime;
+    permissions->allowSongOfSoaring = allowSongOfSoaring;
+    permissions->allowSongOfStorms = allowSongOfStorms;
+    permissions->allowMasks = allowMasks;
+    permissions->allowPictoBox = allowPictoBox;
+    permissions->allowAllItems = allowAllItems;
+    permissions->allowElegyOfEmptiness = allowElegyOfEmptiness;
+    permissions->allowFierceDeity = allowFierceDeity;
+}
+
+void SceneAPI_ApplyPersistentFlags(u16 slot, u32 chest, u32 switch0, u32 switch1, u32 collectible) {
+    SceneAPI_ScenePersistentFlags* persistentFlags = &sceneAPI_customScenes[slot].persistentFlags;
+    persistentFlags->chest = chest;
+    persistentFlags->switch0 = switch0;
+    persistentFlags->switch1 = switch1;
+    persistentFlags->collectible = collectible;
+}
+
+void SceneAPI_AddRoomToMinimap(u16 slot, u16 roomNumber, s32 floor, TexturePtr texture, s32 texWidth, s32 texHeight) {
+    sceneAPI_customScenes[slot].minimap.rooms[roomNumber] = 
+    (SceneAPI_MinimapRoom){
+        true,
+        floor,
+        texture,
+        texWidth,
+        texHeight,
+    };
+}
+
+void SceneAPI_ApplyPermissionButtonB(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowButtonB = enabled;
+}
+
+void SceneAPI_ApplyPermissionTradeItems(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowTradeItems = enabled;
+}
+
+void SceneAPI_ApplyPermissionSongOfTime(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowSongOfTime = enabled;
+}
+
+void SceneAPI_ApplyPermissionSongOfDoubleTime(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowSongOfDoubleTime = enabled;
+}
+
+void SceneAPI_ApplyPermissionInvertedSongOfTime(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowInvertedSongOfTime = enabled;
+}
+
+void SceneAPI_ApplyPermissionSongOfSoaring(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowSongOfSoaring = enabled;
+}
+
+void SceneAPI_ApplyPermissionSongOfStorms(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowSongOfStorms = enabled;
+}
+
+void SceneAPI_ApplyPermissionMasks(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowMasks = enabled;
+}
+
+void SceneAPI_ApplyPermissionPictoBox(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowPictoBox = enabled;
+}
+
+void SceneAPI_ApplyPermissionAllItems(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowAllItems = enabled;
+}
+
+void SceneAPI_ApplyPermissionElegyOfEmptiness(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowElegyOfEmptiness = enabled;
+}
+
+void SceneAPI_ApplyPermissionFierceDeity(u16 slot, bool enabled) {
+    sceneAPI_customScenes[slot].permissions.allowFierceDeity = enabled;
 }

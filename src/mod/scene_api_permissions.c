@@ -6,7 +6,7 @@ RECOMP_HOOK("Interface_UpdateButtonsPart2") void on_Interface_UpdateButtonsPart2
 }
 
 RECOMP_HOOK_RETURN("Interface_UpdateButtonsPart2") void return_Interface_UpdateButtonsPart2() {
-    if (!SceneAPI_IsCustomScene(sPlay)) {
+    if (!SceneAPI_IsCustomScene()) {
         return;
     }
 
