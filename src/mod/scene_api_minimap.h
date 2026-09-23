@@ -4,7 +4,7 @@
 #include "scene_api.h"
 #include "gfx.h"
 
-extern void LoadCustomMinimap(SceneAPI_Minimap* minimap);
+extern void LoadCustomMinimap(SceneAPI_Minimap* minimap, MapDataScene* mapDataScene);
 extern void PrintMapDisp();
 
 #endif /* SCENE_API_MINIMAP_H */

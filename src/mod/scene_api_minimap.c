@@ -37,9 +37,8 @@ RECOMP_PATCH void MapDisp_InitMapData(PlayState* play, void* segmentAddress) {
         sSceneNumRooms = play->roomList.count;
         mapDataScene = Lib_SegmentedToVirtual(segmentAddress);
         sMapDataScene = *mapDataScene;
-        sMapDisp.mapDataScene = &sMapDataScene;
 
-        LoadCustomMinimap(&sceneAPI_customScenes[sceneAPI_customSceneId].minimap);
+        LoadCustomMinimap(&sceneAPI_customScenes[sceneAPI_customSceneId].minimap, &sMapDataScene);
 
         if (play->colCtx.colHeader != NULL) {
             sMapDisp.sceneMinX = play->colCtx.colHeader->minBounds.x;
@@ -85,19 +84,19 @@ RECOMP_HOOK_RETURN("MapDisp_SwapRooms") void return_MapDisp_SwapRooms() {
     }
 }
 
-void LoadCustomMinimap(SceneAPI_Minimap* minimap) {
+void LoadCustomMinimap(SceneAPI_Minimap* minimap, MapDataScene* mapDataScene) {
     // MapDataScene* mapDataScene;
     // recomp_printf("minimap->scale: %d\n", minimap->scale)
     recomp_printf("Load\n");
-    sMapDisp.mapDataScene->scale = minimap->scale;
+    mapDataScene->scale = minimap->scale;
     for (int i = 0; i < ROOM_MAX; i++) {
         if (minimap->rooms[i].isValid) {
-            sMapDisp.mapDataScene->rooms[i].mapId = 0x0106;
-            sMapDisp.mapDataScene->rooms[i].centerX = 0;
-            // sMapDisp.mapDataScene->rooms[i].floorY = minimap->rooms[i].floor;
-            sMapDisp.mapDataScene->rooms[i].floorY = 0;
-            sMapDisp.mapDataScene->rooms[i].centerZ = 0;
-            sMapDisp.mapDataScene->rooms[i].flags = 0x0;
+            mapDataScene->rooms[i].mapId = 0x0106;
+            mapDataScene->rooms[i].centerX = 0;
+            // mapDataScene->rooms[i].floorY = minimap->rooms[i].floor;
+            mapDataScene->rooms[i].floorY = 0;
+            mapDataScene->rooms[i].centerZ = 0;
+            mapDataScene->rooms[i].flags = 0x0;
         }
     }
     // recomp_printf("Load Finish\n");
